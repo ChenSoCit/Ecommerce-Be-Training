@@ -1,7 +1,6 @@
 package com.java.TrainningJV.models;
 
 import java.util.Date;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,9 +38,5 @@ public class User {
     private Integer roleId;
 
     private String password;
-
-    private List<Order> orders;
-
-    private Role role;
 
 }

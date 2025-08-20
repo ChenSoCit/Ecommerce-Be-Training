@@ -20,6 +20,8 @@ public interface  UserService {
 
     int deleteUser(Integer id);
 
+    User findUserByPhone(String phone);
+
     List<User> getUserNoneRole();
 
     List<User> getUserRole(Integer roleId);

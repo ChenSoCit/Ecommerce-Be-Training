@@ -68,12 +68,12 @@ public class UserServiceTest {
         test1.setPassword("tset1");
         test1.setPhone("0987654321");
         test1.setRoleId(1);
-        test1.setOrders(null);
+        
 
         Role  role = new Role();
         role.setId(1);
         role.setName("Admin");
-        test1.setRole(role);
+       
     
 
         test2 = new User();
@@ -87,12 +87,12 @@ public class UserServiceTest {
         test2.setPassword("tets2");
         test2.setPhone("0987654321");
         test2.setRoleId(2);
-        test2.setOrders(null);
+        
 
         Role role2 = new Role();
         role2.setId(2);
         role2.setName("User");
-        test2.setRole(role2);
+      
 
         
         userRequest = new UserRequest();

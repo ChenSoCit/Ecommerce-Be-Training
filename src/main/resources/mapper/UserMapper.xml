@@ -25,13 +25,23 @@
 
 
   <!-- select user detail by id -->
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="com.java.TrainningJV.models.User">
     SELECT 
-        u.id, u.first_name, u.last_name, u.email, u.date_of_birth, u.gender,
-        u.address, u.created_at, u.updated_at, u.phone, u.role_id, u.password,
-        r.name AS role_name
+        u.id
+        , u.first_name AS firstName
+        , u.last_name AS lastName
+        , u.email
+        , u.date_of_birth AS dateOfBirth
+        , u.gender
+        , u.address
+        , u.created_at AS createdAt
+        , u.updated_at AS updatedAt
+        , u.phone
+        , u.role_id AS roleId
+        , u.password
+        
     FROM users u
-    LEFT JOIN roles r ON u.role_id = r.id
+   
     WHERE u.id = #{id,jdbcType=INTEGER}
 </select>
 

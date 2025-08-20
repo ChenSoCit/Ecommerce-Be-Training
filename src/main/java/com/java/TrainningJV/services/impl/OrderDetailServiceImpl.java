@@ -1,11 +1,19 @@
 package com.java.TrainningJV.services.impl;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.java.TrainningJV.dtos.request.OrderDetailRequest;
 import com.java.TrainningJV.exceptions.BadRequestException;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
 import com.java.TrainningJV.mappers.OrderDetailMapper;
 import com.java.TrainningJV.mappers.OrderMapper;
 import com.java.TrainningJV.mappers.ProductMapper;
+import com.java.TrainningJV.mappers.mapperCustom.OrderDetailMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.OrderMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.ProductMapperCustom;
 import com.java.TrainningJV.models.Order;
@@ -13,13 +21,8 @@ import com.java.TrainningJV.models.OrderDetails;
 import com.java.TrainningJV.models.Product;
 import com.java.TrainningJV.models.enums.OrderStatus;
 import com.java.TrainningJV.services.OrderDetailService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
@@ -41,6 +44,8 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Autowired
     ProductMapperCustom productMapperCustom;
 
+    @Autowired
+    OrderDetailMapperCustom orderDetailMapperCustom;
 
     @Override
     @Transactional
@@ -104,14 +109,20 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         OrderDetails exitingOrder = orderDetailMapper.selectByPrimaryKey(id);
         if(exitingOrder == null) {
             log.error("Select Order Details failed");
-            throw new ResourceNotFoundException("Order", "id:", id);
+            throw new ResourceNotFoundException("Order", "id", id);
         }
         return orderDetailMapper.selectByPrimaryKey(id);
     }
 
     @Override
     public List<OrderDetails> selectAllOrderDetails(int orderId) {
-        return List.of();
+        log.info("Select all Order Details by Order Id: {}", orderId);
+        List<OrderDetails> orderDetailsList = orderDetailMapperCustom.selectAllOrderDetailsByOrderId(orderId);
+        if (orderDetailsList == null || orderDetailsList.isEmpty()) {
+            log.error("No Order Details found for Order Id: {}", orderId);
+            return List.of(); // Trả về danh sách rỗng nếu không có kết quả
+        }
+        return orderDetailsList;
     }
 
     @Override
@@ -281,5 +292,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         }
 
         log.info("Deleted OrderDetail id={} (returned stock {}, decreased total {})", id, qty, oldLineTotal);
+    }
+
+    @Override
+    public List<OrderDetails> selectAllOrderDetails() {
+        log.info("Select all Order Details");
+        List<OrderDetails> orderDetailsList = orderDetailMapperCustom.selectAllOrderDetails();
+
+        return orderDetailsList;
     }
 }

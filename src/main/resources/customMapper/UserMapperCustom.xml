@@ -19,7 +19,7 @@
         <result property="phone" column="phone" jdbcType="VARCHAR" />
         <result property="password" column="password" jdbcType="VARCHAR" />
 
-    <collection property="orders" ofType="com.java.TrainningJV.models.Order">
+    <!-- <collection property="orders" ofType="com.java.TrainningJV.models.Order">
         <id property="id" column="order_id" jdbcType="INTEGER"/>
         <result property="userId" column="order_user_id" jdbcType="INTEGER"/>
         <result property="fullName" column="fullname" jdbcType="VARCHAR"/>
@@ -29,54 +29,118 @@
         <result property="totalMoney" column="total_money" jdbcType="NUMERIC"/>
         <result property="orderDate" column="order_date" jdbcType="TIMESTAMP"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
-    </collection>
+    </collection> -->
     </resultMap>
 
     <select id="findByEmail" parameterType="String" resultMap="userResultMap" >
-        SELECT id, first_name, last_name, email, password, date_of_birth, gender, address, phone, role_id, created_at, updated_at
+        SELECT id, first_name, last_name, email, password
+        , date_of_birth, gender, address, phone, role_id
+        , created_at, updated_at
+
         FROM users
+        
         WHERE email = #{email}
     </select>
+      
+    <select id="findByPhone" parameterType="String" resultMap="userResultMap">
+    SELECT 
+        u.id ,
+        u.first_name ,
+        u.last_name ,
+        u.email AS user_email,
+        u.password,
+        u.date_of_birth AS date_of_birth,
+        u.gender,
+        u.address AS user_address,
+        u.phone,
+        u.role_id ,
+        u.created_at AS created_at,
+        u.updated_at AS updated_at,
+
+        o.id AS order_id,
+        o.user_id,
+        o.fullname,
+        o.address AS order_address,
+        o.email AS order_email,
+        o.phone AS order_phone,
+        o.total_money AS totalMoney,
+        o.order_date AS orderDate,
+        o.status
+    FROM users u
+    LEFT JOIN orders o ON o.user_id = u.id
+    WHERE u.phone = #{phone}
+</select>
+
+
 
     <select id="getUserNoneRole" resultMap="userResultMap">
-        SELECT u.id, u.first_name, u.last_name, u.email, u.date_of_birth, u.gender, u.address AS user_address, u.phone, u.role_id, u.created_at, u.updated_at
+        SELECT u.id, u.first_name, u.last_name, u.email
+        , u.date_of_birth, u.gender, u.address AS user_address
+        , u.phone, u.role_id, u.created_at, u.updated_at
+
         FROM users u
+
         LEFT JOIN roles r ON u.role_id = r.id
+
         WHERE r.id IS NULL
     </select>
 
     <select id="getUserRole" resultMap="userResultMap">
-        SELECT u.id, u.first_name, u.last_name, u.email AS user_email, u.date_of_birth, u.gender, u.address AS user_address, u.password,  u.phone, u.role_id, u.created_at, u.updated_at
+        SELECT u.id, u.first_name, u.last_name
+        , u.email AS user_email, u.date_of_birth, u.gender
+        , u.address AS user_address, u.password,  u.phone
+        , u.role_id, u.created_at, u.updated_at
+
         FROM users u
+
         WHERE u.role_id = #{roleId}
     </select>
 
     <select id="countUserRole" resultType="com.java.TrainningJV.dtos.response.RoleCountResponse" >
         SELECT r.id AS roleId, r.name AS roleName, COUNT(u.id) AS userCount
+
         FROM roles r
+
         LEFT JOIN users u ON u.role_id = r.id
+
         GROUP BY r.id, r.name
         ORDER BY r.id;
     </select>
 
     <!-- count user -->
     <select id="countTotalUsers" resultType="int">
-    SELECT COUNT(*) FROM users
+        SELECT COUNT(*) FROM users
     </select>
 
     <!-- get user with order by id -->
     <select id="getUserWithOrders" parameterType="Integer" resultType="com.java.TrainningJV.dtos.response.UserResponse">
         SELECT 
-            u.id ,
-            u.first_name, u.last_name, u.email AS user_email, u.date_of_birth, u.gender,
-            u.address AS user_address, u.phone, u.role_id, u.password, u.created_at, u.updated_at,
+            u.id 
+            , u.first_name
+            , u.last_name
+            , u.email AS user_email
+            , u.date_of_birth
+            , u.gender
+            , u.address AS user_address
+            , u.phone
+            , u.role_id
+            , u.password
+            , u.created_at
+            , u.updated_at,
 
-            o.id AS order_id, o.user_id AS user_order_id, o.fullname,
-            o.address AS order_address, o.email AS order_email, o.phone AS order_phone,
-            o.total_money, o.order_date, o.status
+            o.id AS order_id
+            , o.user_id AS user_order_id
+            , o.fullname
+            , o.address AS order_address
+            , o.email AS order_email
+            , o.phone AS order_phone
+            , o.total_money
+            , o.order_date, o.status
 
         FROM users u
+
         LEFT JOIN orders o ON o.user_id = u.id
+
         WHERE u.id = #{id}
     </select>
 
@@ -109,42 +173,32 @@
             o.id AS order_id,
             o.total_money,
             o.order_date
+
         FROM users u
+        
         LEFT JOIN orders o ON u.id = o.user_id
+
         ORDER BY u.id, o.id
     </select> 
 
-    <!-- Paging for users -->
-    <resultMap id="userPage" type="com.java.TrainningJV.models.User">
-        <id property="id" column="user_id"/>
-        <result property="firstName" column="first_name"/>
-        <result property="lastName" column="last_name"/>
-        <result property="email" column="user_email"/>
-        <result property="dateOfBirth" column="date_of_birth"/>
-        <result property="gender" column="gender"/>
-        <result property="address" column="user_address"/>
-        <result property="roleId" column="role_id"/> 
-        <result property="createdAt" column="created_at"/>
-        <result property="updatedAt" column="updated_at"/>
-        <result property="phone" column="phone"/>
-        <result property="password" column="password"/>
-    </resultMap>
-
-    <select id="getAllUsers" resultMap="userPage">
+    <!-- get all users with paging -->
+    <select id="getAllUsers" resultType="com.java.TrainningJV.dtos.response.UserPagingResponse">
     SELECT 
-        u.id AS user_id,
-        u.first_name,
-        u.last_name,
-        u.email AS user_email,
-        u.date_of_birth,
+        u.id AS userId,
+        u.first_name AS firstName,
+        u.last_name AS lastName,
+        u.email ,
+        u.date_of_birth AS dateOfBirth,
         u.gender,
-        u.address AS user_address,
-        u.role_id,
-        u.created_at,
-        u.updated_at,
+        u.address ,
+        u.role_id AS roleId,
+        u.created_at AS createdAt,
+        u.updated_at AS updatedAt,
         u.phone,
         u.password
+
     FROM users u
+    
     LIMIT #{size} OFFSET #{offset}
     </select>
 

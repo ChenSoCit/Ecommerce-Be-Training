@@ -12,6 +12,8 @@ public interface OrderDetailService {
 
     List<OrderDetails> selectAllOrderDetails(int orderId);
 
+    List<OrderDetails> selectAllOrderDetails();
+
     OrderDetails updateOrderDetails(Integer id, OrderDetailRequest request);
 
     void deleteByOrderId(int OrderId);

@@ -93,6 +93,16 @@ public class UserController {
             .build();
     }
 
+    @GetMapping("/find-by-phone")
+    public ApiResponse getUserByPhone(@RequestParam String phone) {
+        log.info("Fetching user by phone: {}", phone);
+        return ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("get user by phone")
+                .data(userService.findUserByPhone(phone))
+                .build();
+    }
+
     @PostMapping("")
     public ApiResponse createUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("Creating user: {}", userRequest);

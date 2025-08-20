@@ -10,6 +10,7 @@ import com.java.TrainningJV.dtos.request.UserRequest;
 import com.java.TrainningJV.dtos.request.UserRoleRequest;
 import com.java.TrainningJV.dtos.response.RoleCountResponse;
 import com.java.TrainningJV.dtos.response.UserPageResponse;
+import com.java.TrainningJV.dtos.response.UserPagingResponse;
 import com.java.TrainningJV.dtos.response.UserResponse;
 import com.java.TrainningJV.dtos.response.UserWithOrderResponse;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
@@ -231,7 +232,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching all users with pagination: page={}, size={}", page, size);
 
         int offset = (page - 1) * size;
-        List<User> users = userMapperCustom.getAllUsers(offset, size);
+        List<UserPagingResponse> users = userMapperCustom.getAllUsers(offset, size);
 
         int totalElements = userMapperCustom.countTotalUsers();
         int totalPages = (int) Math.ceil((double) totalElements / size);
@@ -245,6 +246,21 @@ public class UserServiceImpl implements UserService {
         log.info("get user successfull");
 
         return userPageResponse;
+    }
+
+    @Override
+    public User findUserByPhone(String phone) {
+    log.info("Finding user by phone: {}", phone);
+        if (phone == null || phone.isEmpty()) {
+            log.warn("Phone number is null or empty");
+            throw new IllegalArgumentException("Phone number cannot be null or empty");
+        }
+        User user = userMapperCustom.findByPhone(phone);
+        if (user == null) {
+            log.warn("User not found with phone: {}", phone);
+            throw new ResourceNotFoundException("User", "phone", phone);
+        }
+        return user;
     }
 
 }

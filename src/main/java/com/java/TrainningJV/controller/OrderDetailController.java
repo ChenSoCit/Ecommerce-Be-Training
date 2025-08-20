@@ -35,6 +35,26 @@ public class OrderDetailController {
                 .build();
     }
 
+    @GetMapping("/all")
+    public ApiResponse getAllOrderDetail(){
+        log.info("Get all Order Details");
+        return ApiResponse.builder()
+            .status(HttpStatus.OK.value())
+            .message("Get all Order Details")
+            .data(orderDetailService.selectAllOrderDetails())
+        .build();
+    }
+
+    @GetMapping("/all-order/{orderId}")
+    public ApiResponse getAllOrderDetailByOrderId(@PathVariable int orderId){
+        log.info("Get all Order Details by Order Id, {}", orderId);
+        return ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all Order Details by Order Id " + orderId)
+                .data(orderDetailService.selectAllOrderDetails(orderId))
+                .build();
+    }
+
     @DeleteMapping("/{id}")
     public ApiResponse deleteOrderDetail(@PathVariable int id){
         log.info("Delete Order Detail by Order Id, {}", id);
