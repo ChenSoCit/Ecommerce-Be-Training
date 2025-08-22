@@ -150,19 +150,58 @@ public class CartSeviceImpl implements CartSevice {
 
     @Override
     @Transactional
-    public void deleteItem(Integer userId, Integer productId) {
+    public void deleteItem(Integer userId, Integer productId){
         Cart cart = cartMapper.selectByUserId(userId);
         if(cart == null){
             throw new ResourceNotFoundException("Cart", "User id", userId);
         }
+
         CartItem  cartItem = cartItemMapper.selectByCartIdAndProductId(cart.getId(), productId);
          if (cartItem == null) {
         throw new ResourceNotFoundException("Product ", "id", productId);
         }
 
-        cartItemMapperCustom.deleteCartItem(cart.getId(), productId);
+        int rows = cartItemMapperCustom.deleteCartItem(cart.getId(), productId);
+        if(rows != 1){
+            log.error("delete product fail");
+            throw new BadRequestException("Delete product found");
+        }
+        
+        log.info("Xóa sản phẩm khỏi giỏ hàng thành công - userId: {}, productId: {}", userId, productId);
     }
 
-    
-    
+    /**
+     * Cập nhật tổng tiền của giỏ hàng
+     * @param cartId ID của giỏ hàng cần cập nhật
+     */
+    private void updateCartTotal(Integer cartId) {
+        log.info("Updating cart total for cartId: {}", cartId);
+        
+        // Tính tổng tiền từ các cart items
+        BigDecimal total = cartItemMapperCustom.calculateCartTotal(cartId);
+        
+        // Lấy thông tin cart
+        Cart cart = cartMapper.selectByPrimaryKey(cartId);
+        if (cart == null) {
+            log.error("Cart not found with id: {}", cartId);
+            throw new ResourceNotFoundException("Cart", "id", cartId);
+        }   
+    }
+
+    @Override
+    @Transactional
+    public void deleteCart(Integer cartId) {
+        Cart extingCart = cartMapper.selectByPrimaryKey(cartId);
+        if(extingCart == null){
+            throw new ResourceNotFoundException("cart", "id", cartId);
+        }
+        cartItemMapper.deleteByPrimaryKey(cartId);
+        log.info("Delete cart with id: ", cartId);
+
+        int rows = cartMapper.deleteByPrimaryKey(cartId);
+        if(rows != 1){
+            throw new BadRequestException("Delete cart found with id: " + cartId);
+        }
+    }
+     
 }

@@ -17,9 +17,7 @@ public interface ProductMapper {
     int insertSelective(Product row);
 
 
-    
     Product selectByPrimaryKey(Integer id);
-
 
    
     int updateByPrimaryKeySelective(Product row);

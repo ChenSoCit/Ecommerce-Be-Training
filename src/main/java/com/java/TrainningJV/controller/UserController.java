@@ -34,52 +34,51 @@ public class UserController {
         log.info("Fetching user details: {}", id);
 
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("get user sc successfully")
-                .data(userService.getUser(id)) 
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("get user sc successfully")
+            .data(userService.getUser(id)) 
+            .build();
     }
-
 
     @GetMapping("")
     public ApiResponse getAllUser(@RequestParam(defaultValue = "1") int page,
                                        @RequestParam(defaultValue = "10") int size) {
         log.info("get all user page {} size {}", page, size);
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("get user none role")
-                .data(userService.getAllUsers(page, size))
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("get user none role")
+            .data(userService.getAllUsers(page, size))
+            .build();
     }
 
     @GetMapping("/roles/{roleId}")
     public ApiResponse getUserByRole(@PathVariable Integer roleId){
         log.info("Fetching user by role: {}", roleId);
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("get user by role")
-                .data(userService.getUserRole(roleId))
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("get user by role")
+            .data(userService.getUserRole(roleId))
+            .build();
     }
 
     @GetMapping("/role-count")
     public ApiResponse getCountRole(){
         log.info("Fetching count role");
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("get count role")
-                .data(userService.getRoleCount())
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("get count role")
+            .data(userService.getRoleCount())
+            .build();
     }
 
     @GetMapping("/all-with-orders")
     public ApiResponse getAllUserWithOrder(){
         log.info("Fetching all users with orders");
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("get all users with orders")
-                .data(userService.getAllUsersWithOrders())
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("get all users with orders")
+            .data(userService.getAllUsersWithOrders())
+            .build();
     }
 
     @GetMapping("/users-orders/{id}")
@@ -97,20 +96,20 @@ public class UserController {
     public ApiResponse getUserByPhone(@RequestParam String phone) {
         log.info("Fetching user by phone: {}", phone);
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("get user by phone")
-                .data(userService.findUserByPhone(phone))
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("get user by phone")
+            .data(userService.findUserByPhone(phone))
+            .build();
     }
 
     @PostMapping("")
     public ApiResponse createUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("Creating user: {}", userRequest);
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("User created successfully")
-                .data(userService.createUser(userRequest))
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("User created successfully")
+            .data(userService.createUser(userRequest))
+            .build();
     }
 
     @PostMapping("/add-user-role")
@@ -118,10 +117,10 @@ public class UserController {
         log.info("Adding user role: {}", userRoleRequest);
 
         return ApiResponse.builder()
-                    .status(HttpStatus.OK.value())
-                    .message("User role added successfully")
-                    .data(userService.addUserRole(userRoleRequest))
-                    .build();
+            .status(HttpStatus.OK.value())
+            .message("User role added successfully")
+            .data(userService.addUserRole(userRoleRequest))
+            .build();
     }
 
 
@@ -143,16 +142,16 @@ public class UserController {
         int result = userService.deleteUser(id);
         if (result > 0) {
             return ApiResponse.builder()
-                    .status(HttpStatus.OK.value())
-                    .message("User deleted successfully")
-                    .data(null)
-                    .build();
+            .status(HttpStatus.OK.value())
+            .message("User deleted successfully")
+            .data(null)
+            .build();
         } else {
             return ApiResponse.builder()
-                    .status(HttpStatus.NOT_FOUND.value())
-                    .message("User not found")
-                    .data(null)
-                    .build();
+            .status(HttpStatus.NOT_FOUND.value())
+            .message("User not found")
+            .data(null)
+            .build();
         }
     }
 }

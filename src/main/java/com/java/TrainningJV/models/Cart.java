@@ -19,6 +19,4 @@ public class Cart {
 
     private Date updatedAt;
 
-
-
 }

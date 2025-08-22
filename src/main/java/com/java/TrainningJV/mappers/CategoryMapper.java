@@ -12,12 +12,10 @@ public interface CategoryMapper {
    
     int insertSelective(Category row);
 
-
     
     Category selectByPrimaryKey(Integer id);
 
 
-    
     int updateByPrimaryKeySelective(Category row);
 
     

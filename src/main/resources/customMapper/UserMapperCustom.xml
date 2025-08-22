@@ -33,13 +33,25 @@
     </resultMap>
 
     <select id="findByEmail" parameterType="String" resultMap="userResultMap" >
-        SELECT id, first_name, last_name, email, password
-        , date_of_birth, gender, address, phone, role_id
-        , created_at, updated_at
+        SELECT 
+        id
+        , first_name
+        , last_name
+        , email
+        , password
+        , date_of_birth
+        , gender
+        , address
+        , phone
+        , role_id
+        , created_at
+        , updated_at
 
-        FROM users
+        FROM 
+        users
         
-        WHERE email = #{email}
+        WHERE 
+        email = #{email}
     </select>
       
     <select id="findByPhone" parameterType="String" resultMap="userResultMap">
@@ -66,44 +78,78 @@
         o.total_money AS totalMoney,
         o.order_date AS orderDate,
         o.status
+
     FROM users u
+
     LEFT JOIN orders o ON o.user_id = u.id
+
     WHERE u.phone = #{phone}
 </select>
 
 
 
     <select id="getUserNoneRole" resultMap="userResultMap">
-        SELECT u.id, u.first_name, u.last_name, u.email
-        , u.date_of_birth, u.gender, u.address AS user_address
-        , u.phone, u.role_id, u.created_at, u.updated_at
+        SELECT 
+        u.id
+        , u.first_name
+        , u.last_name
+        , u.email
+        , u.date_of_birth
+        , u.gender
+        , u.address AS user_address
+        , u.phone
+        , u.role_id
+        , u.created_at
+        , u.updated_at
 
-        FROM users u
+        FROM 
+        users u
 
-        LEFT JOIN roles r ON u.role_id = r.id
+        LEFT JOIN 
+        roles r ON u.role_id = r.id
 
-        WHERE r.id IS NULL
+        WHERE 
+        r.id IS NULL
     </select>
 
     <select id="getUserRole" resultMap="userResultMap">
-        SELECT u.id, u.first_name, u.last_name
-        , u.email AS user_email, u.date_of_birth, u.gender
-        , u.address AS user_address, u.password,  u.phone
-        , u.role_id, u.created_at, u.updated_at
+        SELECT 
+        u.id
+        , u.first_name
+        , u.last_name
+        , u.email AS user_email
+        , u.date_of_birth
+        , u.gender
+        , u.address AS user_address
+        , u.password
+        ,  u.phone
+        , u.role_id
+        , u.created_at
+        , u.updated_at
 
-        FROM users u
+        FROM 
+        users u
 
-        WHERE u.role_id = #{roleId}
+        WHERE 
+        u.role_id = #{roleId}
     </select>
 
     <select id="countUserRole" resultType="com.java.TrainningJV.dtos.response.RoleCountResponse" >
-        SELECT r.id AS roleId, r.name AS roleName, COUNT(u.id) AS userCount
+        SELECT 
+        r.id AS roleId
+        , r.name AS roleName
+        , COUNT(u.id) AS userCount
 
-        FROM roles r
+        FROM 
+        roles r
 
-        LEFT JOIN users u ON u.role_id = r.id
+        LEFT JOIN 
+        users u ON u.role_id = r.id
 
-        GROUP BY r.id, r.name
+        GROUP BY 
+        r.id
+        , r.name
+
         ORDER BY r.id;
     </select>
 

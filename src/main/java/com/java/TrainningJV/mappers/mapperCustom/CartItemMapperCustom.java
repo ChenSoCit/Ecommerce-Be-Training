@@ -1,5 +1,6 @@
 package com.java.TrainningJV.mappers.mapperCustom;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -21,6 +22,7 @@ public interface CartItemMapperCustom {
 
     int selectByUserId(int userId);
 
-    void deleteCartItem(@Param("cartId") int cartId, @Param("productId") int productId);
+    int deleteCartItem(@Param("cartId") int cartId, @Param("productId") int productId);
 
+    BigDecimal calculateCartTotal(Integer cartId);
 }

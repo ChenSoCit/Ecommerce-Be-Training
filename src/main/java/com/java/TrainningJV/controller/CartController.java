@@ -82,4 +82,14 @@ public class CartController {
                 .data("")
             .build();
     }
+
+    @DeleteMapping("/{cartId}")
+    public ApiResponse deleteCart(@PathVariable int cartId){
+        cartService.deleteCart(cartId);
+        return ApiResponse.builder()
+            .status(HttpStatus.OK.value())
+            .message("Delete cart successfull")
+            .data("")
+        .build();
+    }
 }

@@ -1,5 +1,6 @@
 package com.java.TrainningJV.services;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.java.TrainningJV.dtos.request.OrderRequest;
@@ -12,11 +13,22 @@ public interface  OrderService {
     List<Order> getOrdersByUserId(Integer userId);
 
     Order createOrder(OrderRequest orderRequest);
+
+    Order createOrderFormCart(Integer cartId);
     
     Order findOrderById(Integer id);
 
     Order updateOrder(Integer id, OrderRequest orderRequest);
 
     void deleteOrder(Integer id);
+
+    List<Order> findOrderByDay();
+
+    List<Order> findOrderByWeek();
+
+    List<Order> findOrderByMonth();
+
+    List<Order> findOrderByYear();
     
+    List<Order> findOrdersByRange(LocalDate startDate, LocalDate endDate);
 }

@@ -22,5 +22,6 @@ public interface CartSevice {
 
     void deleteItem(Integer userId, Integer productId);
 
+    void deleteCart(Integer cartId);
     
 } 

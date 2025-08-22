@@ -16,22 +16,42 @@
     </resultMap>
 
     <select id="getAllProducts" resultMap="productResultMap">
-        SELECT id, name, description, price, stock_quantity, created_at, updated_at, category_id
-        FROM products
+        SELECT 
+        id
+        , name
+        , description
+        , price
+        , stock_quantity
+        , created_at
+        , updated_at
+        , category_id
+
+        FROM 
+        products
     </select>
 
 <!--    update giam stock product-->
     <update id="updateStock">
-        UPDATE products
-        SET stock_quantity = stock_quantity - #{qty}
-        WHERE id = #{productId} AND stock_quantity >= #{qty}
+        UPDATE 
+        products
+
+        SET 
+        stock_quantity = stock_quantity - #{qty}
+
+        WHERE 
+        id = #{productId} AND stock_quantity >= #{qty}
     </update>
 
 <!--    update tang stock product-->
     <update id="updateIncreaseStock">
-        UPDATE products
-        SET stock_quantity = stock_quantity + #{qty}
-        WHERE id = #{productId}
+        UPDATE 
+        products
+
+        SET 
+        stock_quantity = stock_quantity + #{qty}
+
+        WHERE 
+        id = #{productId}
     </update>
 
 </mapper>

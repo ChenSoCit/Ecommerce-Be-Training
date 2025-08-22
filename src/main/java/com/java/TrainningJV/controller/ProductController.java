@@ -71,11 +71,10 @@ public class ProductController {
     @PutMapping("/{id}")
     public ApiResponse updateProduct(@Valid @PathVariable int id, @Valid @RequestBody ProductRequest productRequest) {
         log.info("Update product with id: {} and request: {}", id, productRequest);
-     
-            return ApiResponse.builder()
-                    .status(HttpStatus.OK.value())
-                    .message("Updated product successfully")
-                    .data(productService.updateProduct(id, productRequest))
-                    .build();
+        return ApiResponse.builder()
+            .status(HttpStatus.OK.value())
+            .message("Updated product successfully")
+            .data(productService.updateProduct(id, productRequest))
+            .build();
     }
 }

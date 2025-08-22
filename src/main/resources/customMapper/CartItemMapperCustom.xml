@@ -60,15 +60,25 @@
 
     </select>
 
+    <select id="calculateCartTotal" resultType="java.math.BigDecimal">
+        SELECT
+        COALESCE(SUM(total), 0)
+
+        FROM cart_items
+
+        WHERE
+        cart_id = #{cartId}
+    </select>
+
     <update id="updateItem" parameterType="com.java.TrainningJV.models.CartItem">
         UPDATE cart_items
         SET 
         quantity = #{quantity,jdbcType=INTEGER}
         , price = #{price,jdbcType=NUMERIC}
         
-
         WHERE 
         cart_id = #{cartId,jdbcType=INTEGER}
+        
         AND 
         product_id = #{productId,jdbcType=INTEGER}
     </update>
@@ -83,5 +93,6 @@
         AND 
         product_id = #{productId,jdbcType=INTEGER}
     </delete>
+
 
 </mapper>

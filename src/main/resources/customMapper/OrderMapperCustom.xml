@@ -19,14 +19,145 @@
 
     <!-- Lấy danh sách order theo userId -->
     <select id="findOrderByUserId" parameterType="java.lang.Integer" resultMap="orderResultMap">
-        SELECT id, user_id, fullname, email, phone, address, order_date, status, total_money
+        SELECT 
+        id
+        , user_id
+        , fullname
+        , email
+        , phone
+        , address
+        , order_date
+        , status
+        , total_money
+
         FROM orders
-        WHERE user_id = #{userId}
+
+        WHERE
+        user_id = #{userId}
+    </select>
+
+    <!-- sap xep order theo day -->
+    <select id= "findOrderByDay" resultMap="orderResultMap">
+        SELECT
+        id
+        , user_id
+        , fullname
+        , email
+        , phone
+        , address
+        , order_date
+        , status
+        , total_money
+
+        FROM
+        orders
+
+        WHERE
+        DATE_TRUNC('day', order_date) = DATE_TRUNC('day', CURRENT_DATE)
+
+        ORDER BY total_money ASC
+    </select>
+
+    <!-- sap xep order theo week -->
+    <select id="findOrderByWeek" resultMap="orderResultMap">
+        SELECT
+        id
+        , user_id
+        , fullname
+        , email
+        , phone
+        , address
+        , order_date
+        , status
+        , total_money
+
+        FROM
+        orders
+
+        WHERE
+        DATE_TRUNC('week', order_date) = DATE_TRUNC('week', CURRENT_DATE)
+
+        ORDER BY total_money ASC
+
+    </select>
+
+    <!-- sap xep order theo month -->
+    <select id="findOrderByMonth" resultMap="orderResultMap">
+        SELECT
+        id
+        , user_id
+        , fullname
+        , email
+        , phone
+        , address
+        , order_date
+        , status
+        , total_money
+
+        FROM
+        orders
+
+        WHERE
+        DATE_TRUNC('month', order_date) = DATE_TRUNC('month', CURRENT_DATE)
+
+        ORDER BY total_money ASC
+
+    </select>
+
+    <!-- sap xep order theo year -->
+    <select id="findOrderByYear" resultMap="orderResultMap">
+        SELECT
+        id
+        , user_id
+        , fullname
+        , email
+        , phone
+        , address
+        , order_date
+        , status
+        , total_money
+
+        FROM
+        orders
+
+        WHERE
+        DATE_TRUNC('year', order_date) = DATE_TRUNC('year', CURRENT_DATE)
+
+        ORDER BY total_money ASC
+
+    </select>
+
+    <select id="findOrderByTypeOrRange" resultMap="orderResultMap">
+    SELECT 
+     id
+    , user_id
+    , fullname
+    , email
+    , phone
+    , address
+    , order_date
+    , status
+    , total_money
+    
+    FROM orders
+
+    WHERE order_date::date BETWEEN #{startDate} AND #{endDate}
+    
+    ORDER BY total_money ASC
     </select>
 
     <!-- Lấy tất cả order -->
     <select id="findAllOrder" resultMap="orderResultMap">
-        SELECT id, user_id, fullname, email, phone, address, order_date, status, total_money
+        SELECT id
+        , user_id
+        , fullname
+        , email
+        , phone
+        , address
+        , order_date
+        , status
+        , total_money
+
         FROM orders
     </select>
 
@@ -37,9 +168,14 @@
 
     <!-- Cập nhật total_money -->
     <update id="totalMoneyOrder">
-        UPDATE orders
-        SET total_money = COALESCE(total_money, 0) + #{delta}
-        WHERE id = #{orderId}
+        UPDATE 
+        orders
+
+        SET 
+        total_money = COALESCE(total_money, 0) + #{delta}
+
+        WHERE 
+        id = #{orderId}
         <!-- COALESCE(total_money, 0): nếu NULL thì coi như 0 -->
     </update>
 

@@ -1,6 +1,7 @@
 package com.java.TrainningJV.mappers.mapperCustom;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -20,4 +21,15 @@ public interface OrderMapperCustom {
 
     // Tong tien
     int totalMoneyOrder(@Param("orderId") Integer orderId, @Param("delta") BigDecimal delta);
+
+    List<Order> findOrderByDay();
+
+    List<Order> findOrderByWeek();
+
+    List<Order> findOrderByMonth();
+
+    List<Order> findOrderByYear();
+
+    List<Order> findOrderByTypeOrRange(@Param("startDate") LocalDate startDate
+                                        , @Param("endDate") LocalDate endDate);                              
 }

@@ -1,5 +1,8 @@
 package com.java.TrainningJV.services.impl;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -9,13 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.java.TrainningJV.dtos.request.OrderRequest;
 import com.java.TrainningJV.exceptions.BadRequestException;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
+import com.java.TrainningJV.mappers.CartMapper;
 import com.java.TrainningJV.mappers.OrderDetailMapper;
 import com.java.TrainningJV.mappers.OrderMapper;
 import com.java.TrainningJV.mappers.UserMapper;
+import com.java.TrainningJV.mappers.mapperCustom.CartItemMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.OrderMapperCustom;
+import com.java.TrainningJV.models.Cart;
+import com.java.TrainningJV.models.CartItem;
 import com.java.TrainningJV.models.Order;
+import com.java.TrainningJV.models.OrderDetails;
 import com.java.TrainningJV.models.User;
 import com.java.TrainningJV.models.enums.OrderStatus;
+import com.java.TrainningJV.services.CartSevice;
 import com.java.TrainningJV.services.OrderService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +39,9 @@ public class OrderServiceImpl implements OrderService{
     private final OrderMapper orderMapper;
     private final OrderMapperCustom orderMapperCustom;
     private final OrderDetailMapper orderDetailMapper;
+    private final CartSevice cartSevices;
+    private final CartItemMapperCustom cartItemMapperCustom;
+    private final CartMapper cartMapper;
 
     @Override
     public Order createOrder(OrderRequest orderRequest) {
@@ -138,6 +150,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    @Transactional
     public List<Order> getOrdersByUserId(Integer userId) {
         log.info("Get orders by user id: {}", userId);
         User existingUser = userMapper.selectByPrimaryKey(userId);
@@ -147,6 +160,80 @@ public class OrderServiceImpl implements OrderService{
         }   
         List<Order> orders = orderMapperCustom.findOrderByUserId(userId);
         return orders;
+    }
+
+    @Override
+    @Transactional
+    public Order createOrderFormCart(Integer cartId) {
+        Cart cart = cartMapper.selectByPrimaryKey(cartId);
+        if (cart == null) throw new ResourceNotFoundException("Cart not found");
+
+        List<CartItem> items = cartItemMapperCustom.findByCartId(cartId);
+        if(items.isEmpty()){
+            throw new BadRequestException("Cart is empty");
+        }
+
+        BigDecimal totalMoney = cartItemMapperCustom.calculateCartTotal(cartId);
+
+        User user = userMapper.selectByPrimaryKey(cart.getUserId());
+
+        Order newOrder = Order.builder()
+            .userId(cart.getUserId())
+            .fullName(user.getFirstName() + " " +user.getLastName())
+            .address(user.getAddress())
+            .email(user.getEmail())
+            .phone(user.getPhone())
+            .orderDate(new Date())
+            .status(OrderStatus.pending)
+            .totalMoney(totalMoney)
+        .build();
+        
+        orderMapper.insert(newOrder);
+
+        for(CartItem item : items){
+            OrderDetails orderDetails = OrderDetails.builder()
+                .orderId(newOrder.getId())
+                .productId(item.getProductId())
+                .numberOfProducts(item.getQuantity())
+                .price(item.getPrice())
+                .totalMoney(item.getTotal())
+            .build();
+
+            orderDetailMapper.insert(orderDetails);
+        }
+        cartSevices.deleteCart(cartId);
+        log.info("Successfully created order {} from cart {}", newOrder.getId(), cartId);
+        return newOrder;
+    }
+
+    @Override
+    public List<Order> findOrderByDay() {
+        log.info("Arrange order by total money ASC");
+        return orderMapperCustom.findOrderByDay();
+    }
+
+    @Override
+    public List<Order> findOrderByWeek() {
+        log.info("Arrange order Week by total money ASC");
+        return orderMapperCustom.findOrderByWeek();
+    }
+
+    @Override
+    public List<Order> findOrderByMonth() {
+        log.info("Arrange order month by total money ASC");
+        return orderMapperCustom.findOrderByMonth();
+    }
+
+
+    @Override
+    public List<Order> findOrderByYear() {
+        log.info("Arrange order year by total money ASC");
+        return orderMapperCustom.findOrderByYear();
+    }
+
+    @Override
+    public List<Order> findOrdersByRange(LocalDate startDate, LocalDate endDate) {
+        return orderMapperCustom.findOrderByTypeOrRange( startDate, endDate);
     }
     
 }
