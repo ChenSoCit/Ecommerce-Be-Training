@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.java.TrainningJV.mappers.UserMapper;
+import com.java.TrainningJV.mappers.mapper.UserMapper;
 import com.java.TrainningJV.models.User;
 import com.java.TrainningJV.services.UserService;
 

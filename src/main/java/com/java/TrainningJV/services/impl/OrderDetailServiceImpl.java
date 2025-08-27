@@ -7,19 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.java.TrainningJV.common.enums.OrderStatus;
 import com.java.TrainningJV.dtos.request.OrderDetailRequest;
 import com.java.TrainningJV.exceptions.BadRequestException;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
-import com.java.TrainningJV.mappers.OrderDetailMapper;
-import com.java.TrainningJV.mappers.OrderMapper;
-import com.java.TrainningJV.mappers.ProductMapper;
+import com.java.TrainningJV.mappers.mapper.OrderDetailMapper;
+import com.java.TrainningJV.mappers.mapper.OrderMapper;
+import com.java.TrainningJV.mappers.mapper.ProductMapper;
 import com.java.TrainningJV.mappers.mapperCustom.OrderDetailMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.OrderMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.ProductMapperCustom;
 import com.java.TrainningJV.models.Order;
 import com.java.TrainningJV.models.OrderDetails;
 import com.java.TrainningJV.models.Product;
-import com.java.TrainningJV.models.enums.OrderStatus;
 import com.java.TrainningJV.services.OrderDetailService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,28 +52,27 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public OrderDetails insertOrderDetails(OrderDetailRequest req) {
         log.info("Insert Order Details, {}", req);
 
-        // 1) Validate input cơ bản
         if (req.getNumberOfProducts() == null || req.getNumberOfProducts() <= 0) {
             throw new BadRequestException("numberOfProducts must be > 0");
         }
 
-        // 2) Lấy order & check trạng thái
+        // Lấy order & check trạng thái
         Order order = orderMapper.selectByPrimaryKey(req.getOrderId());
         if (order == null) throw new ResourceNotFoundException("Order", "id", req.getOrderId());
         if (order.getStatus() != OrderStatus.pending)
             throw new BadRequestException("Order status must be PENDING to add details");
 
-        // 3) Lấy product & kiểm tra tồn kho
+        // Lấy product & kiểm tra tồn kho
         Product product = productMapper.selectByPrimaryKey(req.getProductId());
         if (product == null) throw new ResourceNotFoundException("Product", "id", req.getProductId());
         int qty = req.getNumberOfProducts();
 
-        // 4) Tính tiền (server-side)
+        // Tính tiền (server-side)
         BigDecimal unitPrice = product.getPrice();
         if (unitPrice == null) throw new IllegalStateException("Product price is null");
         BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(qty));
 
-        // 5) Tạo entity và insert
+        // Tạo entity và insert
         OrderDetails detail = OrderDetails.builder()
                 .orderId(req.getOrderId())
                 .productId(req.getProductId())
@@ -86,17 +85,17 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         int rows = orderDetailMapper.insert(detail);
         if (rows != 1) {
             log.error("Insert Order Details failed");
-            throw new RuntimeException("Insert Order Details failed");
+            throw new BadRequestException("Insert Order Details failed");
         }
 
-        // 6) Trừ kho (optimistic via WHERE)
+        // Trừ kho 
         int stockRows = productMapperCustom.updateStock(req.getProductId(), qty);
         if (stockRows != 1)
             throw new BadRequestException("Not enough stock for productId=" + req.getProductId());
 
-        // 7) Cộng tổng tiền đơn
+        // Cộng tổng tiền đơn
         int moneyRows = orderMapperCustom.totalMoneyOrder(order.getId(), lineTotal);
-        if (moneyRows != 1) throw new RuntimeException("Update order total failed");
+        if (moneyRows != 1) throw new BadRequestException("Update order total failed");
 
         log.info("Insert Order Details successful with ID: {}", detail.getId());
 
@@ -156,7 +155,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         if (newQty <= 0) throw new BadRequestException("numberOfProducts must be > 0");
 
         // 5) Lấy giá đơn vị để tính tiền
-        // Quy ước thực tế:
         // - Nếu KHÔNG đổi product: giữ nguyên đơn giá snapshot (oldDetail.getPrice()).
         // - Nếu ĐỔI product: lấy giá hiện tại từ products.
         BigDecimal unitPrice;
@@ -181,7 +179,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
             // Nếu chưa có totalMoney thì tính = price × số lượng
             oldLineTotal = oldDetail.getPrice().multiply(BigDecimal.valueOf(oldQty));
         } else {
-            // Nếu cả price và totalMoney đều null ⇒ mặc định 0
+            
             oldLineTotal = BigDecimal.ZERO;
         }
         BigDecimal newLineTotal = unitPrice.multiply(BigDecimal.valueOf(newQty));

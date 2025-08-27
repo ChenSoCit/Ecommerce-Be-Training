@@ -20,8 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.java.TrainningJV.dtos.request.ProductRequest;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
-import com.java.TrainningJV.mappers.CategoryMapper;
-import com.java.TrainningJV.mappers.ProductMapper;
+import com.java.TrainningJV.mappers.mapper.CategoryMapper;
+import com.java.TrainningJV.mappers.mapper.ProductMapper;
 import com.java.TrainningJV.mappers.mapperCustom.ProductMapperCustom;
 import com.java.TrainningJV.models.Category;
 import com.java.TrainningJV.models.Product;

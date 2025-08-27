@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.java.TrainningJV.mappers.OrderMapper">
+<mapper namespace="com.java.TrainningJV.mappers.mapper.OrderMapper">
 
   <resultMap id="BaseResultMap" type="com.java.TrainningJV.models.Order">
     <id     column="id"           jdbcType="INTEGER"   property="id"/>
@@ -11,7 +11,7 @@
     <result column="phone"        jdbcType="VARCHAR"   property="phone"/>
     <result column="address"      jdbcType="VARCHAR"   property="address"/>
     <result column="order_date"   jdbcType="TIMESTAMP" property="orderDate"/>
-    <result column="status"       jdbcType="OTHER"     javaType="com.java.TrainningJV.models.enums.OrderStatus" property="status"/>
+    <result column="status"       jdbcType="OTHER"     property="status"/>
     <result column="total_money"  jdbcType="NUMERIC"   property="totalMoney"/>
   </resultMap>
 
@@ -64,7 +64,7 @@
       #{phone,jdbcType=VARCHAR},
       #{address,jdbcType=VARCHAR},
       #{orderDate,jdbcType=TIMESTAMP},
-      #{status,javaType=com.java.TrainningJV.models.enums.OrderStatus,jdbcType=OTHER},
+      #{status},
       #{totalMoney,jdbcType=NUMERIC}
     )
   </insert>
@@ -77,7 +77,7 @@
         phone       = #{phone,jdbcType=VARCHAR},
         address     = #{address,jdbcType=VARCHAR},
         order_date  = #{orderDate,jdbcType=TIMESTAMP},
-        status      = #{status,javaType=com.java.TrainningJV.models.enums.OrderStatus,jdbcType=OTHER},
+        status      = #{status},
         total_money = #{totalMoney,jdbcType=NUMERIC}
     where id = #{id,jdbcType=INTEGER}
   </update>

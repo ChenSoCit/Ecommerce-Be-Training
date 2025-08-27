@@ -14,12 +14,11 @@ import com.java.TrainningJV.dtos.response.UserPagingResponse;
 import com.java.TrainningJV.dtos.response.UserResponse;
 import com.java.TrainningJV.dtos.response.UserWithOrderResponse;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
-import com.java.TrainningJV.mappers.RoleMapper;
-import com.java.TrainningJV.mappers.UserMapper;
+import com.java.TrainningJV.mappers.mapper.RoleMapper;
+import com.java.TrainningJV.mappers.mapper.UserMapper;
 import com.java.TrainningJV.mappers.mapperCustom.OrderMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.RoleMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.UserMapperCustom;
-import com.java.TrainningJV.models.Order;
 import com.java.TrainningJV.models.Role;
 import com.java.TrainningJV.models.User;
 import com.java.TrainningJV.services.UserService;
@@ -160,39 +159,18 @@ public class UserServiceImpl implements UserService {
     @Transactional()
     public UserResponse getUserWithOrders(Integer id) {
         log.info("calling getUserWithOrders with id: {}", id);
-        User existingUser = userMapper.selectByPrimaryKey(id);
+        
         if(id == null || id <= 0){
             log.info("Invalid user id: {} ", id);
             throw new IllegalArgumentException("Invalid user id: " + id); 
         }
-
-        if (existingUser == null) {
-            log.warn("User with id {} not found", id);
-            throw new ResourceNotFoundException("User", "id", id);
-        }
+         UserResponse user = userMapperCustom.getUserWithOrders(id);
+         if (user == null) {
+            throw new ResourceNotFoundException("user", "id", id);
+         }
     
-        Role role = roleMapper.selectByPrimaryKey(existingUser.getRoleId());
-
-        List<Order> orders = orderMapperCustom.findOrderByUserId(existingUser.getId());
-
-        UserResponse userResponse = new UserResponse();
-        userResponse.setUserId(existingUser.getId());
-        userResponse.setFirstName(existingUser.getFirstName());
-        userResponse.setLastName(existingUser.getLastName());
-        userResponse.setEmail(existingUser.getEmail());
-        userResponse.setDateOfBirth(existingUser.getDateOfBirth());
-        userResponse.setGender(existingUser.getGender());
-        userResponse.setAddress(existingUser.getAddress());
-        userResponse.setCreatedAt(existingUser.getCreatedAt());
-        userResponse.setUpdatedAt(existingUser.getUpdatedAt());
-        userResponse.setPhone(existingUser.getPhone());
-        userResponse.setPassword(existingUser.getPassword());
-        userResponse.setRoleName(role.getName());
-        userResponse.setOrders(orders);
-        
-        return  userResponse;
+        return user;
     }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int addUserRole(UserRoleRequest userRoleRequest) { 

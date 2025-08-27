@@ -2,6 +2,7 @@ package com.java.TrainningJV.services.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,9 +10,9 @@ import com.java.TrainningJV.dtos.request.AddCartItemRequest;
 import com.java.TrainningJV.dtos.request.CartRequest;
 import com.java.TrainningJV.exceptions.BadRequestException;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
-import com.java.TrainningJV.mappers.CartItemMapper;
-import com.java.TrainningJV.mappers.CartMapper;
-import com.java.TrainningJV.mappers.ProductMapper;
+import com.java.TrainningJV.mappers.mapper.CartItemMapper;
+import com.java.TrainningJV.mappers.mapper.CartMapper;
+import com.java.TrainningJV.mappers.mapper.ProductMapper;
 import com.java.TrainningJV.mappers.mapperCustom.CartItemMapperCustom;
 import com.java.TrainningJV.models.Cart;
 import com.java.TrainningJV.models.CartItem;
@@ -63,7 +64,7 @@ public class CartSeviceImpl implements CartSevice {
     public List<Cart> getAllCarts() {
         log.info("Fetching all carts");
 
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'getAllCarts'");
     }
 
@@ -168,24 +169,6 @@ public class CartSeviceImpl implements CartSevice {
         }
         
         log.info("Xóa sản phẩm khỏi giỏ hàng thành công - userId: {}, productId: {}", userId, productId);
-    }
-
-    /**
-     * Cập nhật tổng tiền của giỏ hàng
-     * @param cartId ID của giỏ hàng cần cập nhật
-     */
-    private void updateCartTotal(Integer cartId) {
-        log.info("Updating cart total for cartId: {}", cartId);
-        
-        // Tính tổng tiền từ các cart items
-        BigDecimal total = cartItemMapperCustom.calculateCartTotal(cartId);
-        
-        // Lấy thông tin cart
-        Cart cart = cartMapper.selectByPrimaryKey(cartId);
-        if (cart == null) {
-            log.error("Cart not found with id: {}", cartId);
-            throw new ResourceNotFoundException("Cart", "id", cartId);
-        }   
     }
 
     @Override

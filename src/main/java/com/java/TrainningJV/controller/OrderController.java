@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.java.TrainningJV.common.enums.StatsRange;
 import com.java.TrainningJV.dtos.request.OrderRequest;
 import com.java.TrainningJV.dtos.response.ApiResponse;
 import com.java.TrainningJV.services.OrderService;
@@ -49,6 +50,20 @@ public class OrderController {
             .status(HttpStatus.OK.value())
             .message("get order sucessfully")
             .data(orderService.getOrders())
+        .build();
+    }
+
+    @GetMapping("/stats/{userId}")
+    public ApiResponse statisOrder(@PathVariable int userId
+                                    , @RequestParam(required = false) StatsRange range
+                                    , @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from
+                                    , @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to )
+        {
+        log.info("");
+        return ApiResponse.builder()
+            .status(HttpStatus.OK.value())
+            .message("order statistics successfull")
+            .data(orderService.staticsOrder(userId, range, from, to))
         .build();
     }
 

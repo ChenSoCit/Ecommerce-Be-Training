@@ -15,19 +15,27 @@
         <result property="categoryId" column="category_id"/>
     </resultMap>
 
-    <select id="getAllProducts" resultMap="productResultMap">
+    <select id="getAllProducts" resultType="com.java.TrainningJV.dtos.response.ProductResponse">
         SELECT 
         id
         , name
         , description
         , price
         , stock_quantity
-        , created_at
+        , created_at AS createdAt
         , updated_at
-        , category_id
+        , category_id AS categoryId
 
         FROM 
         products
+
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countProduct" resultType="int">
+        SELECT COUNT(*) 
+        
+        FROM products
     </select>
 
 <!--    update giam stock product-->

@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.java.TrainningJV.dtos.request.ProductRequest;
+import com.java.TrainningJV.dtos.response.ProductPageResponse;
+import com.java.TrainningJV.dtos.response.ProductResponse;
 import com.java.TrainningJV.exceptions.BadRequestException;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
-import com.java.TrainningJV.mappers.CategoryMapper;
-import com.java.TrainningJV.mappers.ProductMapper;
+import com.java.TrainningJV.mappers.mapper.CategoryMapper;
+import com.java.TrainningJV.mappers.mapper.ProductMapper;
 import com.java.TrainningJV.mappers.mapperCustom.ProductMapperCustom;
 import com.java.TrainningJV.models.Category;
 import com.java.TrainningJV.models.Product;
@@ -27,9 +29,23 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public List<Product> getAllProducts() {
-        log.info("Getting all products");
-        return productMapperCustom.getAllProducts();
+    public ProductPageResponse getAllProducts(int page, int size) {
+        log.info("Getting all products with paging: page{} size{}", page, size);
+        int offset = (page - 1 ) * size;
+        List<ProductResponse> productPage = productMapperCustom.getAllProducts(offset, size);
+
+        int totalElements = productMapperCustom.countProduct();
+        int totalPages = (int) Math.ceil((double)totalElements/size);
+        ProductPageResponse productPageResponse = new ProductPageResponse();
+        productPageResponse.setPageNumber(page);
+        productPageResponse.setPageSize(size);
+        productPageResponse.setTotalElements(totalElements);
+        productPageResponse.setTotalPages(totalPages);
+        productPageResponse.setProduct(productPage);
+
+        log.info("get product all successfull");
+
+        return productPageResponse;
     }
 
     @Override

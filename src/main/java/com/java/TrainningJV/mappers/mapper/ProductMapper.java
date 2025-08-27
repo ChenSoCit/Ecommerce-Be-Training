@@ -1,4 +1,4 @@
-package com.java.TrainningJV.mappers;
+package com.java.TrainningJV.mappers.mapper;
 
 
 

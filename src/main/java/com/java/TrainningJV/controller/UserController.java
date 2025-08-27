@@ -37,7 +37,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("get user sc successfully")
             .data(userService.getUser(id)) 
-            .build();
+        .build();
     }
 
     @GetMapping("")
@@ -48,7 +48,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("get user none role")
             .data(userService.getAllUsers(page, size))
-            .build();
+        .build();
     }
 
     @GetMapping("/roles/{roleId}")
@@ -58,7 +58,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("get user by role")
             .data(userService.getUserRole(roleId))
-            .build();
+        .build();
     }
 
     @GetMapping("/role-count")
@@ -68,7 +68,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("get count role")
             .data(userService.getRoleCount())
-            .build();
+        .build();
     }
 
     @GetMapping("/all-with-orders")
@@ -78,7 +78,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("get all users with orders")
             .data(userService.getAllUsersWithOrders())
-            .build();
+        .build();
     }
 
     @GetMapping("/users-orders/{id}")
@@ -89,7 +89,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("User with orders fetched successfully")
             .data(userWithOrders)
-            .build();
+        .build();
     }
 
     @GetMapping("/find-by-phone")
@@ -99,7 +99,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("get user by phone")
             .data(userService.findUserByPhone(phone))
-            .build();
+        .build();
     }
 
     @PostMapping("")
@@ -109,7 +109,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("User created successfully")
             .data(userService.createUser(userRequest))
-            .build();
+        .build();
     }
 
     @PostMapping("/add-user-role")
@@ -120,7 +120,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("User role added successfully")
             .data(userService.addUserRole(userRoleRequest))
-            .build();
+        .build();
     }
 
 
@@ -132,7 +132,7 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("User updated successfully")
             .data(userService.updateUser(id, userRequest))
-            .build();
+        .build();
 
     }
 
@@ -145,13 +145,13 @@ public class UserController {
             .status(HttpStatus.OK.value())
             .message("User deleted successfully")
             .data(null)
-            .build();
+        .build();
         } else {
             return ApiResponse.builder()
             .status(HttpStatus.NOT_FOUND.value())
             .message("User not found")
             .data(null)
-            .build();
+        .build();
         }
     }
 }

@@ -45,5 +45,5 @@ public class UserRequest {
     @NotNull(message = "Address is required")
     private String address;
 
-    private int  roleId;
+    private int roleId;
 }

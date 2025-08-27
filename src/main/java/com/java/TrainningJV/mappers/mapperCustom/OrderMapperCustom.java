@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.java.TrainningJV.dtos.response.OrderStatsResponse;
 import com.java.TrainningJV.models.Order;
 
 public interface OrderMapperCustom {
@@ -31,5 +32,11 @@ public interface OrderMapperCustom {
     List<Order> findOrderByYear();
 
     List<Order> findOrderByTypeOrRange(@Param("startDate") LocalDate startDate
-                                        , @Param("endDate") LocalDate endDate);                              
+                                        , @Param("endDate") LocalDate endDate);         
+     
+    OrderStatsResponse statisticalOrder(@Param("fromDate") LocalDate fromDate
+                                        , @Param("toDate") LocalDate toDate 
+                                        , @Param("userId") int userId
+                                        , String range);
+    
 }

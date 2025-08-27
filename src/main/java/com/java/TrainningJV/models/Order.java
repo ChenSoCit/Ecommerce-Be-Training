@@ -1,9 +1,9 @@
 package com.java.TrainningJV.models;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
-import com.java.TrainningJV.models.enums.OrderStatus;
+import com.java.TrainningJV.common.enums.OrderStatus;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class Order {
    
     private String address;
     
-    private Date orderDate;
+    private LocalDateTime orderDate;
     
     private OrderStatus status;
     

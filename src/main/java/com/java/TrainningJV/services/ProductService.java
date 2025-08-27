@@ -1,12 +1,12 @@
 package com.java.TrainningJV.services;
 
-import java.util.List;
 
 import com.java.TrainningJV.dtos.request.ProductRequest;
+import com.java.TrainningJV.dtos.response.ProductPageResponse;
 import com.java.TrainningJV.models.Product;
 
 public interface ProductService {
-    List<Product> getAllProducts();
+    ProductPageResponse getAllProducts(int page, int size);
 
     Product getProductById(Integer id);
 

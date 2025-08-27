@@ -20,8 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.java.TrainningJV.dtos.request.UserRequest;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
-import com.java.TrainningJV.mappers.RoleMapper;
-import com.java.TrainningJV.mappers.UserMapper;
+import com.java.TrainningJV.mappers.mapper.RoleMapper;
+import com.java.TrainningJV.mappers.mapper.UserMapper;
 import com.java.TrainningJV.mappers.mapperCustom.OrderMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.RoleMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.UserMapperCustom;

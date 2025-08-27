@@ -28,10 +28,10 @@ public class OrderDetailController {
     public ApiResponse insertOrderDetail(@RequestBody OrderDetailRequest request){
         log.info("Insert Order Detail, {}", request);
         return ApiResponse.builder()
-                .message("Insert Order Detail")
-                .status(HttpStatus.OK.value())
-                .data(orderDetailService.insertOrderDetails(request))
-                .build();
+            .message("Insert Order Detail")
+            .status(HttpStatus.OK.value())
+            .data(orderDetailService.insertOrderDetails(request))
+        .build();
     }
 
     @GetMapping("/{orderId}")
@@ -58,10 +58,10 @@ public class OrderDetailController {
     public ApiResponse getAllOrderDetailByOrderId(@PathVariable int orderId){
         log.info("Get all Order Details by Order Id, {}", orderId);
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("Get all Order Details by Order Id " + orderId)
-                .data(orderDetailService.selectAllOrderDetails(orderId))
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("Get all Order Details by Order Id " + orderId)
+            .data(orderDetailService.selectAllOrderDetails(orderId))
+        .build();
     }
 
     @DeleteMapping("/{id}")
@@ -69,19 +69,19 @@ public class OrderDetailController {
         log.info("Delete Order Detail by Order Id, {}", id);
         orderDetailService.deleteById(id);
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("Delete Order Detail by Order Id: "+ id)
-                .data("")
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("Delete Order Detail by Order Id: "+ id)
+            .data("")
+        .build();
     }
 
     @PutMapping("/{id}")
     public ApiResponse updateOrderDetail(@PathVariable int id, @RequestBody OrderDetailRequest request){
         log.info("Update Order Detail by Order Id, {}", id);
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("Update Order Detail by Order Id")
-                .data(orderDetailService.updateOrderDetails(id, request))
-                .build();
+            .status(HttpStatus.OK.value())
+            .message("Update Order Detail by Order Id")
+            .data(orderDetailService.updateOrderDetails(id, request))
+        .build();
     }
 }

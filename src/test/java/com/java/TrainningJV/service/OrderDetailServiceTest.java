@@ -1,36 +1,31 @@
 package com.java.TrainningJV.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.java.TrainningJV.common.enums.OrderStatus;
 import com.java.TrainningJV.dtos.request.OrderDetailRequest;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
-import com.java.TrainningJV.mappers.OrderDetailMapper;
-import com.java.TrainningJV.mappers.OrderMapper;
-import com.java.TrainningJV.mappers.ProductMapper;
+import com.java.TrainningJV.mappers.mapper.OrderDetailMapper;
+import com.java.TrainningJV.mappers.mapper.OrderMapper;
+import com.java.TrainningJV.mappers.mapper.ProductMapper;
 import com.java.TrainningJV.mappers.mapperCustom.OrderMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.ProductMapperCustom;
 import com.java.TrainningJV.models.Order;
 import com.java.TrainningJV.models.OrderDetails;
 import com.java.TrainningJV.models.Product;
-import com.java.TrainningJV.models.enums.OrderStatus;
 import com.java.TrainningJV.services.impl.OrderDetailServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +43,7 @@ public class OrderDetailServiceTest {
     private Product productTest;
     private OrderDetailRequest orderDetailResquestTest;
     private OrderDetails orderDetailTest;
+
     @BeforeEach
     void setUp(){
         orderTest = Order.builder()
@@ -57,9 +53,9 @@ public class OrderDetailServiceTest {
             .status(OrderStatus.pending)  
             .email("emailtets@gamil.com")
             .phone("0123456789")
-            .address("123 Test St")
+            .address("123 Test HN")
             .totalMoney(BigDecimal.valueOf(200.0))
-            .orderDate(new Date())
+            .orderDate(LocalDateTime.of(2025,8,21, 11,29))
         .build();
 
         productTest = Product.builder()
@@ -93,18 +89,31 @@ public class OrderDetailServiceTest {
     }
     
 
-    // @Test
-    // void testGetOrderDetailById_validId_returnOrderDetail() {
-    //     when(orderMapper.selectByPrimaryKey(1)).thenReturn(orderTest);
-    //     when(productMapper.selectByPrimaryKey(1)).thenReturn(productTest);
-       
-    //     OrderDetails orderDetails = orderDetailService.selectOrderDetailsByOrderId(1);
-
-    //     assertNotNull(orderDetails);
-    //     assertEquals(1, orderDetails.getOrderId());
-    //     assertEquals("Red", orderDetails.getColor());
-    
-    // }
+//     @Test
+//     void testGetOrderDetailById_validId_returnOrderDetail() {
+//         when(orderMapper.selectByPrimaryKey(1)).thenReturn(orderTest);
+//         when(productMapper.selectByPrimaryKey(1)).thenReturn(productTest);
+//
+//        when(orderDetailMapper.insert(any(OrderDetails.class))).thenAnswer(invocation -> {
+//            OrderDetails orderDetail = invocation.getArgument(0);
+//            orderDetail.setId(1);
+//            return 1;
+//        });
+//
+//        when(productMapperCustom.updateStock(1, 2)).thenReturn(1);
+//
+//        when(orderMapperCustom.totalMoneyOrder(1, BigDecimal.valueOf(200))).thenReturn(1);
+//
+//         OrderDetails createdOrderDetails = orderDetailService.insertOrderDetails(orderDetailResquestTest);
+//
+//         assertNotNull(createdOrderDetails);
+//         assertEquals(1, createdOrderDetails.getOrderId());
+//         assertEquals("Red", createdOrderDetails.getColor());
+//         assertEquals(BigDecimal.valueOf(200.0), createdOrderDetails.getTotalMoney());
+//
+//         verify(orderDetailMapper, times(1)).insert(any(OrderDetails.class));
+//
+//     }
 
 
     @Test

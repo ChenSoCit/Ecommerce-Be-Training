@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.java.TrainningJV.dtos.request.AddCartItemRequest;
 import com.java.TrainningJV.dtos.request.CartRequest;
 import com.java.TrainningJV.dtos.response.ApiResponse;
@@ -28,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("api/v1/carts")
 public class CartController {
     private final CartSevice cartService;
-    
+
     @PostMapping("")
     public ApiResponse createCart(@RequestBody CartRequest request) {
         log.info("Fetching cart for user with ID: {}", request.getUserId());
@@ -51,7 +50,7 @@ public class CartController {
     }
 
     @GetMapping("/{userId}")
-    public ApiResponse getCartItem(@PathVariable int userId){
+    public ApiResponse getCartItem(@PathVariable int userId) {
         log.info("Fetching cart items for user with ID: {}", userId);
         return ApiResponse.builder()
                 .status(HttpStatus.OK.value())
@@ -61,35 +60,33 @@ public class CartController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse updateCartItem(@PathVariable int id, @RequestBody AddCartItemRequest request){
+    public ApiResponse updateCartItem(@PathVariable int id, @RequestBody AddCartItemRequest request) {
         log.info("update item");
         return ApiResponse.builder()
-            .status(HttpStatus.OK.value())
-            .message("update cart item successfull")
-            .data(cartService.updateItem(id, request))
-        .build();
+                .status(HttpStatus.OK.value())
+                .message("update cart item successfull")
+                .data(cartService.updateItem(id, request))
+                .build();
     }
 
-   
     @DeleteMapping("/{userid}/items/{productId}")
-    public ApiResponse deleteCartItem(@PathVariable int userId, 
-                                      @PathVariable int productId)
-    {
+    public ApiResponse deleteCartItem(@PathVariable int userId,
+            @PathVariable int productId) {
         cartService.deleteItem(userId, productId);
-        return  ApiResponse.builder()
+        return ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("detele cart item successfull")
                 .data("")
-            .build();
+                .build();
     }
 
     @DeleteMapping("/{cartId}")
-    public ApiResponse deleteCart(@PathVariable int cartId){
+    public ApiResponse deleteCart(@PathVariable int cartId) {
         cartService.deleteCart(cartId);
         return ApiResponse.builder()
-            .status(HttpStatus.OK.value())
-            .message("Delete cart successfull")
-            .data("")
-        .build();
+                .status(HttpStatus.OK.value())
+                .message("Delete cart successfull")
+                .data("")
+                .build();
     }
 }

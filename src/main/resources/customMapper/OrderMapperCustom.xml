@@ -13,7 +13,7 @@
         <result column="phone"        jdbcType="VARCHAR"   property="phone"/>
         <result column="address"      jdbcType="VARCHAR"   property="address"/>
         <result column="order_date"   jdbcType="TIMESTAMP" property="orderDate"/>
-        <result column="status"       jdbcType="VARCHAR"   javaType="com.java.TrainningJV.models.enums.OrderStatus" property="status"/>
+        <result column="status"       jdbcType="VARCHAR"   property="status"/>
         <result column="total_money"  jdbcType="NUMERIC"   property="totalMoney"/>
     </resultMap>
 
@@ -159,6 +159,22 @@
         , total_money
 
         FROM orders
+    </select>
+
+    <!-- Thong ke order -->
+
+    <select id="statisticalOrder" resultType="com.java.TrainningJV.dtos.response.OrderStatsResponse" >
+        SELECT
+            COUNT(*) AS totalOrder 
+            , COALESCE(SUM(total_money), 0) AS totalMoney
+            , #{fromDate}::date AS fromDate
+            , #{toDate}::date AS toDate
+            , #{range} AS range
+        FROM orders
+
+        WHERE
+            user_id = #{userId}
+            AND order_date::date BETWEEN #{fromDate} AND #{toDate}
     </select>
 
     <!-- Đếm tổng số order -->

@@ -3,19 +3,22 @@ package com.java.TrainningJV.services.impl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.java.TrainningJV.common.enums.OrderStatus;
+import com.java.TrainningJV.common.enums.StatsRange;
+import com.java.TrainningJV.common.utils.DateRangeUtil;
 import com.java.TrainningJV.dtos.request.OrderRequest;
+import com.java.TrainningJV.dtos.response.OrderStatsResponse;
 import com.java.TrainningJV.exceptions.BadRequestException;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
-import com.java.TrainningJV.mappers.CartMapper;
-import com.java.TrainningJV.mappers.OrderDetailMapper;
-import com.java.TrainningJV.mappers.OrderMapper;
-import com.java.TrainningJV.mappers.UserMapper;
+import com.java.TrainningJV.mappers.mapper.CartMapper;
+import com.java.TrainningJV.mappers.mapper.OrderDetailMapper;
+import com.java.TrainningJV.mappers.mapper.OrderMapper;
+import com.java.TrainningJV.mappers.mapper.UserMapper;
 import com.java.TrainningJV.mappers.mapperCustom.CartItemMapperCustom;
 import com.java.TrainningJV.mappers.mapperCustom.OrderMapperCustom;
 import com.java.TrainningJV.models.Cart;
@@ -23,7 +26,6 @@ import com.java.TrainningJV.models.CartItem;
 import com.java.TrainningJV.models.Order;
 import com.java.TrainningJV.models.OrderDetails;
 import com.java.TrainningJV.models.User;
-import com.java.TrainningJV.models.enums.OrderStatus;
 import com.java.TrainningJV.services.CartSevice;
 import com.java.TrainningJV.services.OrderService;
 
@@ -58,7 +60,7 @@ public class OrderServiceImpl implements OrderService{
             .phone(orderRequest.getPhone())
             .address(orderRequest.getAddress())
             .status(OrderStatus.pending)
-            .orderDate(new Date())
+            .orderDate(LocalDateTime.now())
     
         .build();
         int rows = orderMapper.insert(newOrder);
@@ -183,7 +185,7 @@ public class OrderServiceImpl implements OrderService{
             .address(user.getAddress())
             .email(user.getEmail())
             .phone(user.getPhone())
-            .orderDate(new Date())
+            .orderDate(LocalDateTime.now())
             .status(OrderStatus.pending)
             .totalMoney(totalMoney)
         .build();
@@ -234,6 +236,34 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public List<Order> findOrdersByRange(LocalDate startDate, LocalDate endDate) {
         return orderMapperCustom.findOrderByTypeOrRange( startDate, endDate);
+    }
+
+    @Override
+    public OrderStatsResponse staticsOrder(Integer userId, StatsRange range, LocalDate from, LocalDate to) {
+        
+        LocalDate fromDate;
+        LocalDate toDate;
+        String rangeLabel;
+
+        if(range == StatsRange.CUSTOM ){
+            LocalDate[] dates = DateRangeUtil.getRangeCustom(from, to);
+            fromDate = dates[0];
+            toDate = dates[1];
+            rangeLabel = "custom";
+        }else if(range == null && from != null && to != null){
+            LocalDate[] dates = DateRangeUtil.getRangeCustom(from, to);
+            fromDate = dates[0];
+            toDate = dates[1];
+            rangeLabel = "custom";
+        }
+        else{
+            LocalDate[] dates = DateRangeUtil.getRange(range);
+            fromDate =dates[0];
+            toDate = dates[1];
+            rangeLabel = range.name().toLowerCase();
+        }
+
+        return orderMapperCustom.statisticalOrder(fromDate, toDate, userId, rangeLabel);
     }
     
 }
