@@ -1,15 +1,19 @@
 package com.java.TrainningJV.services;
 
+
 import com.java.TrainningJV.dtos.request.ProductRequest;
+import com.java.TrainningJV.dtos.response.ProductPageResponse;
 import com.java.TrainningJV.models.Product;
 
 public interface ProductService {
+    ProductPageResponse getAllProducts(int page, int size);
+
     Product getProductById(Integer id);
 
-    Integer addProduct(ProductRequest productRequest);
+    Product addProduct(ProductRequest productRequest);
 
     void deleteProduct(Integer id);
 
-    int updateProduct(Integer id, ProductRequest productRequest);
+    Product updateProduct(Integer id, ProductRequest productRequest);
 
 }

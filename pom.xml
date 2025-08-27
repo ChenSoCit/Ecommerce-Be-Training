@@ -60,11 +60,21 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		<!-- lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- test mock bean -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- test controller, service -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -74,7 +84,7 @@
 
 	<build>
 		<plugins>
-			<!-- generator:generate -->
+			<!-- generator:generate mybatis -->
 			<plugin>
 				<groupId>org.mybatis.generator</groupId>
 				<artifactId>mybatis-generator-maven-plugin</artifactId>

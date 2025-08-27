@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.TrainningJV.mappers.mapperCustom.CartItemMapperCustom">
+    <resultMap id="cartItemResultMap" type="com.java.TrainningJV.models.CartItem">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="cart_id" jdbcType="INTEGER" property="cartId"/>
+        <result column="product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="price" jdbcType="NUMERIC" property="price"/>
+        <result column="total" jdbcType="NUMERIC" property="total"/>
+    </resultMap>
+
+    <select id="selectByCartId" parameterType="java.lang.Integer" resultMap="cartItemResultMap">
+        SELECT 
+        id
+        , cart_id
+        , product_id
+        , quantity
+        , price
+        , total
+
+        FROM cart_items
+
+        WHERE cart_id = #{cartId}
+    </select>
+
+    
+    <select id="findByCartId" parameterType="java.lang.Integer" resultMap="cartItemResultMap">
+        SELECT 
+        id
+        , cart_id
+        , product_id
+        , quantity
+        , price
+        , total
+
+        FROM cart_items
+
+        WHERE cart_id = #{cartId}
+    </select>
+
+    <select id="findCartItemByCartIdAndProductId" resultMap="cartItemResultMap">
+        SELECT 
+        id
+        , cart_id
+        , product_id
+        , quantity
+        , price
+        , total
+
+        FROM cart_items
+
+        WHERE
+        cart_id = #{cartId,jdbcType=INTEGER}
+        AND 
+        product_id = #{productId,jdbcType=INTEGER}
+
+    </select>
+
+    <select id="calculateCartTotal" resultType="java.math.BigDecimal">
+        SELECT
+        COALESCE(SUM(total), 0)
+
+        FROM cart_items
+
+        WHERE
+        cart_id = #{cartId}
+    </select>
+
+    <update id="updateItem" parameterType="com.java.TrainningJV.models.CartItem">
+        UPDATE cart_items
+        SET 
+        quantity = #{quantity,jdbcType=INTEGER}
+        , price = #{price,jdbcType=NUMERIC}
+        
+        WHERE 
+        cart_id = #{cartId,jdbcType=INTEGER}
+        
+        AND 
+        product_id = #{productId,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteCartItem" parameterType="com.java.TrainningJV.models.CartItem">
+        DELETE 
+        
+        FROM cart_items
+
+        WHERE 
+        cart_id = #{cartId,jdbcType=INTEGER}
+        AND 
+        product_id = #{productId,jdbcType=INTEGER}
+    </delete>
+
+
+</mapper>

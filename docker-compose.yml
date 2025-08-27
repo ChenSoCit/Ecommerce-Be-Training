@@ -1,33 +1,35 @@
 
-  # postgres:
-  #   image: postgres
-  #   container_name: postgres-container
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: 123456
-  #     POSTGRES_DB: test_db
-  #     PGDATA: /data/postgres
-  #   volumes:
-  #     - postgres:/data/postgres
-  #     - ./initdb.sql:/docker-entrypoint-initdb.d/init.sql
-  #   ports:
-  #     - '6432:5432'
-  #   networks:
-  #     - my_network
-
 services:
   app:
     build: .
     container_name: spring-boot-app
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/test_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123456
     ports:
       - "8080:8080"
+    depends_on:
+      - postgres
     networks:
       - my_network
+
+  postgres:
+    image: postgres:16-alpine 
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: test_db
+    ports:
+      - "5686:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - my_network
+
+volumes:
+  postgres-data:
 
 networks:
   my_network:

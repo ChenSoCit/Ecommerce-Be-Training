@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.TrainningJV.mappers.mapper.OrderDetailMapper">
+  <resultMap id="BaseResultMap" type="com.java.TrainningJV.models.OrderDetails">
+   
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_id"   jdbcType="INTEGER" property="orderId" />
+    <result column="product_id" jdbcType="INTEGER" property="productId" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="number_of_products" jdbcType="INTEGER" property="numberOfProducts" />
+    <result column="total_money" jdbcType="DOUBLE" property="totalMoney" />
+    <result column="color" jdbcType="VARCHAR" property="color" />
+  </resultMap>
+  
+
+
+  <!-- select by id -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    id, order_id, product_id, price, number_of_products, total_money, color
+    from order_details
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByOrderId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, order_id, product_id, price, number_of_products, total_money, color
+    from order_details
+    where order_id = #{_parameter,jdbcType=INTEGER}
+  </select>
+
+  <!-- delete by order detail id -->
+  <delete id="deleteByPrimaryKey" parameterType="int">
+  
+    delete from order_details
+    where id = #{id}
+  </delete>
+
+  <!-- delete by order id -->
+  <delete id="deleteByOrderId" parameterType="int">
+  
+    delete from order_details
+    where order_id = #{orderId}
+  </delete>
+
+  <!-- insert order detail -->
+  <insert id="insert" parameterType="com.java.TrainningJV.models.OrderDetails" useGeneratedKeys="true" keyProperty="id">
+
+    insert into order_details (order_id, product_id,price,
+       number_of_products,total_money, color)
+    values (#{orderId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, #{price,jdbcType=INTEGER},
+      #{numberOfProducts,jdbcType=INTEGER}, #{totalMoney,jdbcType=INTEGER},  #{color,jdbcType=VARCHAR})
+  </insert>
+
+  
+  <!-- update by id -->
+  <update id="updateByPrimaryKey" parameterType="com.java.TrainningJV.models.OrderDetails">
+  
+    update order_details
+    <set>
+      <if test="orderId != null">order_id = #{orderId},</if>
+      <if test="productId != null">product_id = #{productId},</if>
+      <if test="price != null">price = #{price},</if>
+      <if test="numberOfProducts != null">number_of_products = #{numberOfProducts},</if>
+      <if test="totalMoney != null">total_money = #{totalMoney},</if>
+      <if test="color != null">color = #{color},</if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

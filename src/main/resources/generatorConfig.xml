@@ -32,6 +32,24 @@
         <!-- <table tableName="products" domainObjectName="Product" />
         <table tableName="users" domainObjectName="User" />
         <table tableName="roles" domainObjectName="Role" /> -->
-        <table tableName="orders" domainObjectName="Order" />
+        <!-- <table tableName="orders" domainObjectName="Order" /> -->
+        <!-- <table tableName="categories" domainObjectName="Category" /> -->
+        <!-- <table tableName="order_details" domainObjectName="OrderDetails" /> -->
+        <table tableName="cart" domainObjectName="Cart" 
+            enableCountByExample="false"
+            enableDeleteByExample="false"
+            enableSelectByExample="false"
+            enableUpdateByExample="false">
+        <generatedKey column="id" sqlStatement="PostgreSQL" identity="true"/>
+        </table>
+
+        <table tableName="cart_items" domainObjectName="CartItems" 
+            enableCountByExample="false"
+            enableDeleteByExample="false"
+            enableSelectByExample="false"
+            enableUpdateByExample="false">
+        <generatedKey column="id" sqlStatement="PostgreSQL" identity="true"/>
+        </table>
+        
     </context>
 </generatorConfiguration>
