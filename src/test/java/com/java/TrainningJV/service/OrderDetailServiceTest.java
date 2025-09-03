@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.java.TrainningJV.common.enums.OrderStatus;
+import com.java.TrainningJV.common.OrderStatus;
 import com.java.TrainningJV.dtos.request.OrderDetailRequest;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
 import com.java.TrainningJV.mappers.mapper.OrderDetailMapper;

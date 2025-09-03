@@ -8,9 +8,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.java.TrainningJV.common.enums.OrderStatus;
-import com.java.TrainningJV.common.enums.StatsRange;
-import com.java.TrainningJV.common.utils.DateRangeUtil;
+import com.java.TrainningJV.common.DateRangeUtil;
+import com.java.TrainningJV.common.OrderStatus;
+import com.java.TrainningJV.common.StatsRange;
 import com.java.TrainningJV.dtos.request.OrderRequest;
 import com.java.TrainningJV.dtos.response.OrderStatsResponse;
 import com.java.TrainningJV.exceptions.BadRequestException;
@@ -245,22 +245,19 @@ public class OrderServiceImpl implements OrderService{
         LocalDate toDate;
         String rangeLabel;
 
-        if(range == StatsRange.CUSTOM ){
+        if(range == StatsRange.CUSTOM || (range == null && from != null && to != null)){
             LocalDate[] dates = DateRangeUtil.getRangeCustom(from, to);
             fromDate = dates[0];
             toDate = dates[1];
             rangeLabel = "custom";
-        }else if(range == null && from != null && to != null){
-            LocalDate[] dates = DateRangeUtil.getRangeCustom(from, to);
-            fromDate = dates[0];
-            toDate = dates[1];
-            rangeLabel = "custom";
-        }
-        else{
+        }else if(range != null){
             LocalDate[] dates = DateRangeUtil.getRange(range);
-            fromDate =dates[0];
+            fromDate = dates[0];
             toDate = dates[1];
             rangeLabel = range.name().toLowerCase();
+        }
+        else{
+            throw new IllegalArgumentException("Invalid range: both range and from/to are null");
         }
 
         return orderMapperCustom.statisticalOrder(fromDate, toDate, userId, rangeLabel);

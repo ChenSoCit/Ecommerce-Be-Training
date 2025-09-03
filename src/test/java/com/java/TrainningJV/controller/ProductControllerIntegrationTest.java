@@ -156,8 +156,11 @@ class ProductControllerIntegrationTest {
         // Xóa product id=1
         mockMvc.perform(delete("/api/v1/products/{id}", 1))
             .andExpect(MockMvcResultMatchers.status().isOk());
+            
 
         // DB không còn bản ghi id=1
         assertNull(findProductNameById(1));
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM products WHERE id = ?", Integer.class, 1);
+        assertEquals(0, count);
     }
 }

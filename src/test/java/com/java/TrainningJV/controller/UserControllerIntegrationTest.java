@@ -3,6 +3,7 @@ package com.java.TrainningJV.controller;
 import java.sql.Date;
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,10 @@ public class UserControllerIntegrationTest  {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, "Tra", "Nguyen", "tra@gmail.com", "12345667",
             Date.valueOf(LocalDate.of(1995, 5, 20)), "Male", "0912345678", "123 HN", 3);
+
+        jdbcTemplate.update("INSERT INTO users (first_name, last_name, email, password, date_of_birth, gender, phone, address, role_id) " +
+            "VALUES ('User12', 'Test', 'user12@gmail.com', '123456', '1990-01-12', 'Female', '0900000012', 'Address 12', 3)");
+
 }
 
 
@@ -106,7 +111,29 @@ public class UserControllerIntegrationTest  {
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("email: Invalid email format"));
+
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
+        assertThat(count).isEqualTo(1);
     }
+
+    @Test
+    void getUser_success() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders
+            .get("/api/users/{id}", 1))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value("tra@gmail.com"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data.firstName").value("Tra"));
+    }
+
+    @Test
+    void getUser_fail_notFound() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders
+        .get("/api/users/{id}", 999))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(404))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value( "User not found with id: 999"));
+    }
+
 
     @Test
     void testUpdateUser_Success() throws Exception {
@@ -146,5 +173,5 @@ public class UserControllerIntegrationTest  {
     Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users WHERE id = ?", Integer.class, 1);
     assertEquals(0, count);
     }
-    
+
 }
