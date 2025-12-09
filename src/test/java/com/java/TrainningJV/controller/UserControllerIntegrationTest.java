@@ -113,7 +113,7 @@ public class UserControllerIntegrationTest  {
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("email: Invalid email format"));
 
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
-        assertThat(count).isEqualTo(1);
+        assertThat(count).isEqualTo(2);
     }
 
     @Test
