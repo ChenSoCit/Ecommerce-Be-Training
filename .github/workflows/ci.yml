@@ -19,7 +19,6 @@ jobs:
           java-version: '17' # chi dinh version JDK la 17
           distribution: 'temurin' # chi dinh su dung temurin distribution
 
-
       - name: Cache maven # step name
         uses: actions/cache@v3 # su dung action cache de cache thu vien maven
         with:
@@ -36,3 +35,20 @@ jobs:
         with:
           name: spring-boot-app # chi dinh ten artifact
           path: target/*.jar # chi dinh duong dan den file artifact
+
+      # Login Docker Hub
+      - name: Login  Docker Hub # step name
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}  
+
+      # Build Docker Image
+      - name: Build Docker Image # step name
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/spring-boot-app:${{ github.sha }} .
+
+      # Push image lên Docker Hub
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/spring-boot-app:${{ github.sha }}
