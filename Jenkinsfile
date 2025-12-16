@@ -1,52 +1,33 @@
 pipeline {
     agent any
 
-    environment {
-        APP_PORT = "8080"
-        JAR_NAME = "app.jar"
-        DEPLOY_DIR = "/home/jenkins/app"
-    }
-
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build JAR') {
+        stage('Run Tests') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn test'
             }
         }
 
-        stage('Prepare Deploy Dir') {
+        stage('Build Package') {
             steps {
-                sh '''
-                mkdir -p ${DEPLOY_DIR}
-                cp target/*.jar ${DEPLOY_DIR}/${JAR_NAME}
-                '''
+                sh 'mvn clean package'
             }
         }
+    }
 
-        stage('Stop Old App') {
-            steps {
-                sh '''
-                PID=$(lsof -ti tcp:${APP_PORT}) || true
-                if [ -n "$PID" ]; then
-                    kill -9 $PID
-                fi
-                '''
-            }
+    post {
+        success {
+            echo 'CI pipeline SUCCESS'
         }
-
-        stage('Deploy New App') {
-            steps {
-                sh '''
-                nohup java -jar ${DEPLOY_DIR}/${JAR_NAME} > ${DEPLOY_DIR}/app.log 2>&1 &
-                '''
-            }
+        failure {
+            echo 'CI pipeline FAILED'
         }
     }
 }
