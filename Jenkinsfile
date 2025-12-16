@@ -1,33 +1,40 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'maven3'     // cấu hình trong Jenkins Global Tool Configuration
+        jdk 'jdk17'        // hoặc jdk8 / jdk11 tùy project
+    }
+
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout Source') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Run Tests') {
+        stage('Build & Test') {
             steps {
-                sh 'mvn test'
+                sh 'mvn clean test'
             }
         }
 
-        stage('Build Package') {
+        stage('Package JAR') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package -DskipTests'
             }
         }
     }
 
     post {
         success {
-            echo 'CI pipeline SUCCESS'
+            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            echo '✅ Build JAR SUCCESS'
         }
+
         failure {
-            echo 'CI pipeline FAILED'
+            echo '❌ Build FAILED'
         }
     }
 }
