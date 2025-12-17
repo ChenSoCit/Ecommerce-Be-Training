@@ -2,39 +2,48 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven3'     // cấu hình trong Jenkins Global Tool Configuration
-        jdk 'jdk17'        // hoặc jdk8 / jdk11 tùy project
+        maven 'maven3'
+        jdk 'jdk17'
+    }
+
+    triggers {
+        githubPush()
     }
 
     stages {
 
-        stage('Checkout Source') {
-            steps {
-                checkout scm
+        stage('CI - Develop') {
+            when {
+                branch 'develop'
             }
-        }
-
-        stage('Build & Test') {
             steps {
                 sh 'mvn clean test'
             }
         }
 
-        stage('Package JAR') {
+        stage('CI - Pull Request to Master') {
+            when {
+                allOf {
+                    branch 'master'
+                    expression { env.CHANGE_ID != null }
+                }
+            }
+            steps {
+                sh 'mvn clean test'
+            }
+        }
+
+        stage('CD - Master Deploy') {
+            when {
+                allOf {
+                    branch 'master'
+                    expression { env.CHANGE_ID == null }
+                }
+            }
             steps {
                 sh 'mvn clean package -DskipTests'
+                echo 'Deploy production here'
             }
         }
     }
-
-    post {
-        success {
-            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            echo 'Build JAR SUCCESS'
-        }
-
-        failure {
-            echo 'Build FAILED'
-        }
-    }
-}
+} 
