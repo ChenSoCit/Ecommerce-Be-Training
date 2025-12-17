@@ -30,11 +30,11 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            echo '✅ Build JAR SUCCESS'
+            echo 'Build JAR SUCCESS'
         }
 
         failure {
-            echo '❌ Build FAILED'
+            echo 'Build FAILED'
         }
     }
 }
