@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.java.TrainningJV.common.enums.OrderStatus;
+import com.java.TrainningJV.common.OrderStatus;
 import com.java.TrainningJV.dtos.request.OrderDetailRequest;
 import com.java.TrainningJV.exceptions.BadRequestException;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;

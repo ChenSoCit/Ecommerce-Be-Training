@@ -1,10 +1,8 @@
-package com.java.TrainningJV.common.utils;
+package com.java.TrainningJV.common;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-
-import com.java.TrainningJV.common.enums.StatsRange;
 
 public class DateRangeUtil {
     public static LocalDate[] getRange(StatsRange range){

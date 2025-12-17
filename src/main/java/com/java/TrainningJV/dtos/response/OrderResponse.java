@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.java.TrainningJV.common.enums.OrderStatus;
+import com.java.TrainningJV.common.OrderStatus;
 
 import lombok.Getter;
 import lombok.Setter;

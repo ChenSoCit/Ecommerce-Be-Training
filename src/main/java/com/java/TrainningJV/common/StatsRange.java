@@ -1,4 +1,4 @@
-package com.java.TrainningJV.common.enums;
+package com.java.TrainningJV.common;
 
 public enum StatsRange {
     TODAY,

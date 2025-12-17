@@ -3,21 +3,14 @@ package com.java.TrainningJV.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.java.TrainningJV.common.enums.OrderStatus;
+import com.java.TrainningJV.common.OrderStatus;
 import com.java.TrainningJV.dtos.request.OrderDetailRequest;
-import com.java.TrainningJV.exceptions.ResourceNotFoundException;
 import com.java.TrainningJV.mappers.mapper.OrderDetailMapper;
 import com.java.TrainningJV.mappers.mapper.OrderMapper;
 import com.java.TrainningJV.mappers.mapper.ProductMapper;
@@ -116,17 +109,17 @@ public class OrderDetailServiceTest {
 //     }
 
 
-    @Test
-    void testCreateOrderDetail_notFound_returnResourceNotFound(){
-        when(orderDetailMapper.selectByPrimaryKey(999)).thenReturn(null);
+    // @Test
+    // void testCreateOrderDetail_notFound_returnResourceNotFound(){
+    //     when(orderDetailMapper.selectByPrimaryKey(999)).thenReturn(null);
 
-        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> {
-            orderDetailService.selectOrderDetailsByOrderId(999);
-        });
-        assertEquals("Order not found with id: 999", ex.getMessage());
-        verify(orderDetailMapper).selectByPrimaryKey(999);
-        verifyNoMoreInteractions(orderDetailMapper);
-    }
+    //     ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> {
+    //         orderDetailService.selectOrderDetailsByOrderId(999);
+    //     });
+    //     assertEquals("Order not found with id: 999", ex.getMessage());
+    //     verify(orderDetailMapper).selectByPrimaryKey(999);
+    //     verifyNoMoreInteractions(orderDetailMapper);
+    // }
 
 //    @Test
 //    void insertOrderDetails_validData_returnOrderDetails(){

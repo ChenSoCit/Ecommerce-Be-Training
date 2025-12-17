@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.java.TrainningJV.common.enums.StatsRange;
+import com.java.TrainningJV.common.StatsRange;
 import com.java.TrainningJV.dtos.request.OrderRequest;
 import com.java.TrainningJV.dtos.response.ApiResponse;
 import com.java.TrainningJV.services.OrderService;

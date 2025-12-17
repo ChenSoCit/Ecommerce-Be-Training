@@ -1,0 +1,54 @@
+name: ci-example
+
+on:
+  push:
+    branches: ["main", "feat/auth"] # trigger chay khi co code duoc push len branch main hoac feat/auth
+  pull_request: 
+
+jobs:
+  build: # job name
+    runs-on: ubuntu-latest # su dung ubuntu-latest la environment de chay job
+
+    steps:
+      - name: checkout code # step name
+        uses: actions/checkout@v4 # su dung action checkout de checkout code ve runner
+
+      - name: Setup JDK 17 # step name
+        uses: actions/setup-java@v4 # su dung action setup-java de cai dat JDK
+        with:
+          java-version: '17' # chi dinh version JDK la 17
+          distribution: 'temurin' # chi dinh su dung temurin distribution
+
+      - name: Cache maven # step name
+        uses: actions/cache@v3 # su dung action cache de cache thu vien maven
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }} # tao key cache dua tren os va hash cua file pom.xml
+          restore-keys: |
+            ${{ runner.os }}-maven-  
+
+      - name: Build with Maven # step name
+        run: mvn -B clean install  # chay lenh mvn clean install de build project
+
+      - name: Upload artifact # step name
+        uses: actions/upload-artifact@v4 # su dung action upload-artifact de upload artifact
+        with:
+          name: spring-boot-app # chi dinh ten artifact
+          path: target/*.jar # chi dinh duong dan den file artifact
+
+      # Login Docker Hub
+      - name: Login  Docker Hub # step name
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}  
+
+      # Build Docker Image
+      - name: Build Docker Image # step name
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/spring-boot-app:${{ github.sha }} .
+
+      # Push image lên Docker Hub
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/spring-boot-app:${{ github.sha }}

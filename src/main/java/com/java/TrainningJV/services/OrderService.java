@@ -3,7 +3,7 @@ package com.java.TrainningJV.services;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.java.TrainningJV.common.enums.StatsRange;
+import com.java.TrainningJV.common.StatsRange;
 import com.java.TrainningJV.dtos.request.OrderRequest;
 import com.java.TrainningJV.dtos.response.OrderStatsResponse;
 import com.java.TrainningJV.models.Order;
