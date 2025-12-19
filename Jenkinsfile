@@ -2,39 +2,101 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven3'     // cấu hình trong Jenkins Global Tool Configuration
-        jdk 'jdk17'        // hoặc jdk8 / jdk11 tùy project
+        maven 'maven3'
+        jdk 'jdk17'
     }
 
     stages {
 
+        /* =========================
+           CHECKOUT SOURCE
+        ========================= */
         stage('Checkout Source') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build & Test') {
+        /* =========================
+           BUILD & TEST (FEATURE)
+        ========================= */
+        stage('Build & Test - Feature') {
+            when {
+                branch 'feat/auth'
+            }
             steps {
+                echo 'Build & Test FEATURE branch'
                 sh 'mvn clean test'
             }
         }
 
-        stage('Package JAR') {
+        /* =========================
+           BUILD & TEST (DEVELOP)
+        ========================= */
+        stage('Build & Test - Develop') {
+            when {
+                branch 'develop'
+            }
             steps {
+                echo 'Build & Test DEVELOP branch'
+                sh 'mvn clean test'
+            }
+        }
+
+        /* =========================
+           BUILD & TEST (MASTER)
+        ========================= */
+        stage('Build & Test - Master') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Build & Test MASTER branch'
+                sh 'mvn clean test'
+            }
+        }
+
+        /* =========================
+           PACKAGE JAR (MASTER ONLY)
+        ========================= */
+        stage('Package JAR') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Package JAR'
                 sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        /* =========================
+           DEPLOY (MASTER ONLY)
+        ========================= */
+        stage('Deploy') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Deploy application'
+
+                sshagent(['ssh-ubuntu-server']) {
+                    sh '''
+                        scp target/*.jar ubuntu@SERVER_IP:/opt/app/app.jar
+                        ssh ubuntu@SERVER_IP "systemctl restart app"
+                    '''
+                }
             }
         }
     }
 
     post {
         success {
+            echo 'PIPELINE SUCCESS'
             archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            echo '✅ Build JAR SUCCESS'
         }
 
         failure {
-            echo '❌ Build FAILED'
+            echo 'PIPELINE FAILED'
         }
     }
 }
