@@ -64,7 +64,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo  Package JAR'
+                echo  'Package JAR'
                 sh 'mvn clean package -DskipTests'
             }
         }
