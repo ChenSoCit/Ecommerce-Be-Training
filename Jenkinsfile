@@ -92,7 +92,6 @@ pipeline {
     post {
         success {
             echo 'PIPELINE SUCCESS'
-            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
         }
 
         failure {
