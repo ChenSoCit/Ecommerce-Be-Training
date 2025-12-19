@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven3'
-        jdk 'jdk17'
+        maven 'MAVEN'
+        jdk 'JDK17'
     }
 
     stages {
@@ -64,7 +64,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo  Package JAR'
+                echo  'Package JAR'
                 sh 'mvn clean package -DskipTests'
             }
         }
@@ -91,12 +91,12 @@ pipeline {
 
     post {
         success {
-            echo '✅ PIPELINE SUCCESS'
+            echo 'PIPELINE SUCCESS'
             archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
         }
 
         failure {
-            echo '❌ PIPELINE FAILED'
+            echo 'PIPELINE FAILED'
         }
     }
 }
