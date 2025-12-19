@@ -6,44 +6,97 @@ pipeline {
         jdk 'jdk17'
     }
 
-    triggers {
-        githubPush()
-    }
-
     stages {
 
-        stage('CI - Develop') {
+        /* =========================
+           CHECKOUT SOURCE
+        ========================= */
+        stage('Checkout Source') {
+            steps {
+                checkout scm
+            }
+        }
+
+        /* =========================
+           BUILD & TEST (FEATURE)
+        ========================= */
+        stage('Build & Test - Feature') {
+            when {
+                branch 'feat/auth'
+            }
+            steps {
+                echo 'Build & Test FEATURE branch'
+                sh 'mvn clean test'
+            }
+        }
+
+        /* =========================
+           BUILD & TEST (DEVELOP)
+        ========================= */
+        stage('Build & Test - Develop') {
             when {
                 branch 'develop'
             }
             steps {
+                echo 'Build & Test DEVELOP branch'
                 sh 'mvn clean test'
             }
         }
 
-        stage('CI - Pull Request to Master') {
+        /* =========================
+           BUILD & TEST (MASTER)
+        ========================= */
+        stage('Build & Test - Master') {
             when {
-                allOf {
-                    branch 'master'
-                    expression { env.CHANGE_ID != null }
-                }
+                branch 'master'
             }
             steps {
+                echo 'Build & Test MASTER branch'
                 sh 'mvn clean test'
             }
         }
 
-        stage('CD - Master Deploy') {
+        /* =========================
+           PACKAGE JAR (MASTER ONLY)
+        ========================= */
+        stage('Package JAR') {
             when {
-                allOf {
-                    branch 'master'
-                    expression { env.CHANGE_ID == null }
-                }
+                branch 'master'
             }
             steps {
+                echo 'Package JAR'
                 sh 'mvn clean package -DskipTests'
-                echo 'Deploy production here'
+            }
+        }
+
+        /* =========================
+           DEPLOY (MASTER ONLY)
+        ========================= */
+        stage('Deploy') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Deploy application'
+
+                sshagent(['ssh-ubuntu-server']) {
+                    sh '''
+                        scp target/*.jar ubuntu@SERVER_IP:/opt/app/app.jar
+                        ssh ubuntu@SERVER_IP "systemctl restart app"
+                    '''
+                }
             }
         }
     }
-} 
+
+    post {
+        success {
+            echo 'PIPELINE SUCCESS'
+            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+        }
+
+        failure {
+            echo 'PIPELINE FAILED'
+        }
+    }
+}
