@@ -34,7 +34,16 @@ pipeline {
             }
             post {
                  always{
+                    echo 'Publishing JUnit Test'
                     junit 'target/surefire-reports/*.xml'
+
+                    echo 'Publishing Code Coverage Report'
+                    jacoco(
+                        execPattern: 'target/jacoco.exec',
+                        classPattern: 'target/classes',
+                        sourcePattern: 'src/main/java',
+                        exclusionPattern: '**/dto/**,**/config/**,**/exception/**'
+                    )
                  }
             }
         }
