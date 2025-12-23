@@ -2,8 +2,14 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven3'
-        jdk 'jdk17'
+        maven 'MAVEN'
+        jdk 'JDK17'
+    }
+
+    environment{
+        APP_NAME = 'training-jv'
+        IMAGE_NAME = 'training-jv:latest'
+        CONTAINER_NAME = 'training-jv-container'
     }
 
     stages {
@@ -13,90 +19,74 @@ pipeline {
         ========================= */
         stage('Checkout Source') {
             steps {
+                echo 'Checkout source code from Github'
                 checkout scm
             }
         }
 
         /* =========================
-           BUILD & TEST (FEATURE)
+           BUILD & TEST 
         ========================= */
-        stage('Build & Test - Feature') {
-            when {
-                branch 'feat/auth'
-            }
+        stage('Build & Unit Test') {
             steps {
-                echo 'Build & Test FEATURE branch'
+                echo 'Build project and run unit tests'
                 sh 'mvn clean test'
+            }
+            post {
+                 always{
+                    junit 'target/surefire-reports/*.xml'
+                 }
             }
         }
 
         /* =========================
-           BUILD & TEST (DEVELOP)
-        ========================= */
-        stage('Build & Test - Develop') {
-            when {
-                branch 'develop'
-            }
-            steps {
-                echo 'Build & Test DEVELOP branch'
-                sh 'mvn clean test'
-            }
-        }
-
-        /* =========================
-           BUILD & TEST (MASTER)
-        ========================= */
-        stage('Build & Test - Master') {
-            when {
-                branch 'master'
-            }
-            steps {
-                echo 'Build & Test MASTER branch'
-                sh 'mvn clean test'
-            }
-        }
-
-        /* =========================
-           PACKAGE JAR (MASTER ONLY)
+           BUILD JAR
         ========================= */
         stage('Package JAR') {
-            when {
-                branch 'master'
-            }
             steps {
-                echo  Package JAR'
-                sh 'mvn clean package -DskipTests'
+                echo 'Package application into Jar'
+                sh 'mvn package -DskipTests'
             }
         }
 
         /* =========================
-           DEPLOY (MASTER ONLY)
+           BUILD DOCKER IMAGE
         ========================= */
-        stage('Deploy') {
-            when {
-                branch 'master'
-            }
+        stage('Build Docker Image') {
             steps {
-                echo '🚀 Deploy application'
-
-                // sshagent(['ssh-ubuntu-server']) {
-                //     sh '''
-                //         scp target/*.jar ubuntu@SERVER_IP:/opt/app/app.jar
-                //         ssh ubuntu@SERVER_IP "systemctl restart app"
-                //     '''
-                // }
+                echo 'Build Docker image'
+                sh ''' docker build -t ${IMAGE_NAME} . '''
             }
         }
+
+        /* =========================
+           DEPLOY TO DEV ENVIRONMENT
+        ========================= */
+        stage('Deloy Docker Container') {
+            steps {
+                echo 'Deloy application using Docker'
+
+                sh ''' 
+                docker stop ${CONTAINER_NAME} || true
+                docker rm ${CONTAINER_NAME} || true
+
+                docker run -d \
+                    --name ${CONTAINER_NAME} \
+                    -p 8088:8080 \
+                    ${IMAGE_NAME}
+                '''
+            }
+        }
+
     }
 
     post {
         success {
-            echo '✅ PIPELINE SUCCESS'
-            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            echo 'CI/CD PIPELINE SUCCESS'
         }
 
         failure {
-            echo '❌ PIPELINE FAILED'
+            echo 'CI/CD PIPELINE FAILED'
         }
     }
 }
