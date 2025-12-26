@@ -1,5 +1,8 @@
 package com.java.TrainningJV.dtos.request;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -27,7 +30,7 @@ public class UserRoleRequest {
     private String password;
 
     @NotNull(message = "Date of birth is required")
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @NotNull(message = "Gender is required")
     private String gender;

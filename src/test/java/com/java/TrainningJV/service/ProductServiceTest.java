@@ -2,6 +2,8 @@ package com.java.TrainningJV.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.times;
@@ -19,6 +22,8 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.java.TrainningJV.dtos.request.ProductRequest;
+import com.java.TrainningJV.dtos.response.ProductPageResponse;
+import com.java.TrainningJV.dtos.response.ProductResponse;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
 import com.java.TrainningJV.mappers.mapper.CategoryMapper;
 import com.java.TrainningJV.mappers.mapper.ProductMapper;
@@ -199,6 +204,51 @@ public class ProductServiceTest {
         verify(productMapper).selectByPrimaryKey(999);
         verify(productMapper, times(0)).deleteByPrimaryKey(any(Integer.class));
    }
+
+    @Test
+    void getAllProducts_Success() {
+        List<ProductResponse> mockProducts = Arrays.asList(
+            new ProductResponse(),
+            new ProductResponse()
+        );
+        
+        when(productMapperCustom.getAllProducts(0, 20)).thenReturn(mockProducts);
+        when(productMapperCustom.countProduct()).thenReturn(50);
+
+        ProductPageResponse result = productService.getAllProducts(1, 20);
+
+        assertNotNull(result);
+        assertEquals(1, result.getPageNumber());
+        assertEquals(20, result.getPageSize());
+        assertEquals(50, result.getTotalElements());
+        assertEquals(3, result.getTotalPages()); // Math.ceil(50/20) = 3
+        assertEquals(2, result.getProduct().size());
+        
+        verify(productMapperCustom).getAllProducts(0, 20);
+        verify(productMapperCustom).countProduct();
+    }
+
+    @Test
+    void getAllProducts_PageTwo() {
+        List<ProductResponse> mockProducts = Arrays.asList(
+            new ProductResponse()
+        );
+        
+        when(productMapperCustom.getAllProducts(10, 10)).thenReturn(mockProducts);
+        when(productMapperCustom.countProduct()).thenReturn(15);
+
+        ProductPageResponse result = productService.getAllProducts(2, 10);
+
+        assertNotNull(result);
+        assertEquals(2, result.getPageNumber());
+        assertEquals(10, result.getPageSize());
+        assertEquals(15, result.getTotalElements());
+        assertEquals(2, result.getTotalPages());
+        assertEquals(1, result.getProduct().size());
+        
+        verify(productMapperCustom).getAllProducts(10, 10);
+        verify(productMapperCustom).countProduct();
+    }
 
 
 }

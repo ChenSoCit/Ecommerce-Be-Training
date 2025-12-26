@@ -1,7 +1,9 @@
 package com.java.TrainningJV.service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -19,6 +23,12 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.java.TrainningJV.dtos.request.UserRequest;
+import com.java.TrainningJV.dtos.request.UserRoleRequest;
+import com.java.TrainningJV.dtos.response.RoleCountResponse;
+import com.java.TrainningJV.dtos.response.UserPageResponse;
+import com.java.TrainningJV.dtos.response.UserPagingResponse;
+import com.java.TrainningJV.dtos.response.UserResponse;
+import com.java.TrainningJV.dtos.response.UserWithOrderResponse;
 import com.java.TrainningJV.exceptions.ResourceNotFoundException;
 import com.java.TrainningJV.mappers.mapper.RoleMapper;
 import com.java.TrainningJV.mappers.mapper.UserMapper;
@@ -54,6 +64,7 @@ public class UserServiceTest {
     private static User test2;
     private static UserRequest userRequest;
     private static User existingUser;
+    private static UserRoleRequest userRoleRequest;
 
     @BeforeAll
     static void beforeAll(){
@@ -112,6 +123,18 @@ public class UserServiceTest {
                 .lastName("User")
                 .email("old@example.com")
                 .build();
+
+        userRoleRequest = new UserRoleRequest();
+        userRoleRequest.setFirstName("NewUser");
+        userRoleRequest.setLastName("Test");
+        userRoleRequest.setEmail("newuser@gmail.com");
+        userRoleRequest.setPassword("password123");
+        userRoleRequest.setAddress("Test Address");
+        userRoleRequest.setDateOfBirth(LocalDate.of(1995, 5, 15));
+        userRoleRequest.setGender("male");
+        userRoleRequest.setPhoneNumber("0123456789");
+        userRoleRequest.setRoleId(1);
+        userRoleRequest.setRoleName("Admin");
     
     }
 
@@ -221,6 +244,236 @@ public class UserServiceTest {
         assertEquals("User not found with id: 999", exception.getMessage());
         verify(userMapper).selectByPrimaryKey(999);
         verify(userMapper, never()).deleteByPrimaryKey(999);
+    }
+
+    @Test
+    void getAllUsers_Success() {
+        List<UserPagingResponse> mockUsers = Arrays.asList(
+            new UserPagingResponse(),
+            new UserPagingResponse()
+        );
+        
+        when(userMapperCustom.getAllUsers(0, 10)).thenReturn(mockUsers);
+        when(userMapperCustom.countTotalUsers()).thenReturn(20);
+
+        UserPageResponse result = userService.getAllUsers(1, 10);
+
+        assertNotNull(result);
+        assertEquals(1, result.getPageNumber());
+        assertEquals(10, result.getPageSize());
+        assertEquals(20, result.getTotalElements());
+        assertEquals(2, result.getTotalPages());
+        assertEquals(2, result.getUsers().size());
+        
+        verify(userMapperCustom).getAllUsers(0, 10);
+        verify(userMapperCustom).countTotalUsers();
+    }
+
+    @Test
+    void getUserRole_Success() {
+        Role role = new Role();
+        role.setId(1);
+        role.setName("Admin");
+        
+        List<User> mockUsers = Arrays.asList(test1, test2);
+        
+        when(roleMapper.selectByPrimaryKey(1)).thenReturn(role);
+        when(userMapperCustom.getUserRole(1)).thenReturn(mockUsers);
+
+        List<User> result = userService.getUserRole(1);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(roleMapper).selectByPrimaryKey(1);
+        verify(userMapperCustom).getUserRole(1);
+    }
+
+    @Test
+    void getUserRole_RoleNotFound() {
+        when(roleMapper.selectByPrimaryKey(999)).thenReturn(null);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.getUserRole(999);
+        });
+
+        assertEquals("Role not found with id: 999", exception.getMessage());
+        verify(roleMapper).selectByPrimaryKey(999);
+        verify(userMapperCustom, never()).getUserRole(anyInt());
+    }
+
+    @Test
+    void getRoleCount_Success() {
+        List<RoleCountResponse> mockRoleCounts = Arrays.asList(
+            new RoleCountResponse(),
+            new RoleCountResponse()
+        );
+        
+        when(userMapperCustom.countUserRole()).thenReturn(mockRoleCounts);
+
+        List<RoleCountResponse> result = userService.getRoleCount();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(userMapperCustom).countUserRole();
+    }
+
+    @Test
+    void getAllUsersWithOrders_Success() {
+        List<UserWithOrderResponse> mockUsersWithOrders = Arrays.asList(
+            new UserWithOrderResponse(),
+            new UserWithOrderResponse()
+        );
+        
+        when(userMapperCustom.getUsersWithOrders()).thenReturn(mockUsersWithOrders);
+
+        List<UserWithOrderResponse> result = userService.getAllUsersWithOrders();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(userMapperCustom).getUsersWithOrders();
+    }
+
+    @Test
+    void getUserWithOrders_Success() {
+        UserResponse mockUserResponse = new UserResponse();
+        mockUserResponse.setUserId(1);
+        
+        when(userMapperCustom.getUserWithOrders(1)).thenReturn(mockUserResponse);
+
+        UserResponse result = userService.getUserWithOrders(1);
+
+        assertNotNull(result);
+        assertEquals(1, result.getUserId());
+        verify(userMapperCustom).getUserWithOrders(1);
+    }
+
+    @Test
+    void getUserWithOrders_InvalidId() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            userService.getUserWithOrders(-1);
+        });
+
+        assertEquals("Invalid user id: -1", exception.getMessage());
+        verify(userMapperCustom, never()).getUserWithOrders(anyInt());
+    }
+
+    @Test
+    void getUserWithOrders_NotFound() {
+        when(userMapperCustom.getUserWithOrders(999)).thenReturn(null);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.getUserWithOrders(999);
+        });
+
+        assertEquals("User not found with id: 999", exception.getMessage());
+        verify(userMapperCustom).getUserWithOrders(999);
+    }
+
+    @Test
+    void addUserRole_Success() {
+        Role mockRole = new Role();
+        mockRole.setId(1);
+        mockRole.setName("Admin");
+        
+        when(roleMapperCustom.findRoleByName("Admin")).thenReturn(mockRole);
+        when(userMapperCustom.findByEmail("newuser@gmail.com")).thenReturn(null);
+        when(userMapper.insert(any(User.class))).thenReturn(1);
+
+        int result = userService.addUserRole(userRoleRequest);
+
+        assertEquals(1, result);
+        verify(roleMapperCustom).findRoleByName("Admin");
+        verify(userMapperCustom).findByEmail("newuser@gmail.com");
+        verify(userMapper).insert(any(User.class));
+    }
+
+    @Test
+    void addUserRole_CreateNewRole() {
+        when(roleMapperCustom.findRoleByName("NewRole")).thenReturn(null);
+        when(userMapperCustom.findByEmail("newuser@gmail.com")).thenReturn(null);
+        when(roleMapper.insert(any(Role.class))).thenReturn(1);
+        when(userMapper.insert(any(User.class))).thenReturn(1);
+
+        userRoleRequest.setRoleName("NewRole");
+        int result = userService.addUserRole(userRoleRequest);
+
+        assertEquals(1, result);
+        verify(roleMapperCustom).findRoleByName("NewRole");
+        verify(roleMapper).insert(any(Role.class));
+        verify(userMapper).insert(any(User.class));
+    }
+
+    @Test
+    void addUserRole_EmailAlreadyExists() {
+        Role mockRole = new Role();
+        mockRole.setId(1);
+        mockRole.setName("Admin");
+        
+        when(roleMapperCustom.findRoleByName("Admin")).thenReturn(mockRole);
+        when(userMapperCustom.findByEmail("newuser@gmail.com")).thenReturn(existingUser);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            userService.addUserRole(userRoleRequest);
+        });
+
+        assertEquals("Email already exists: newuser@gmail.com", exception.getMessage());
+        verify(userMapper, never()).insert(any(User.class));
+    }
+
+    @Test
+    void findUserByPhone_Success() {
+        when(userMapperCustom.findByPhone("0987654321")).thenReturn(test1);
+
+        User result = userService.findUserByPhone("0987654321");
+
+        assertNotNull(result);
+        assertEquals("0987654321", result.getPhone());
+        verify(userMapperCustom).findByPhone("0987654321");
+    }
+
+    @Test
+    void findUserByPhone_NullPhone() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            userService.findUserByPhone(null);
+        });
+
+        assertEquals("Phone number cannot be null or empty", exception.getMessage());
+        verify(userMapperCustom, never()).findByPhone(anyString());
+    }
+
+    @Test
+    void findUserByPhone_EmptyPhone() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            userService.findUserByPhone("");
+        });
+
+        assertEquals("Phone number cannot be null or empty", exception.getMessage());
+        verify(userMapperCustom, never()).findByPhone(anyString());
+    }
+
+    @Test
+    void findUserByPhone_NotFound() {
+        when(userMapperCustom.findByPhone("9999999999")).thenReturn(null);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.findUserByPhone("9999999999");
+        });
+
+        assertEquals("User not found with phone: 9999999999", exception.getMessage());
+        verify(userMapperCustom).findByPhone("9999999999");
+    }
+
+    @Test
+    void getUserNoneRole_Success() {
+        List<User> mockUsers = Arrays.asList(test1, test2);
+        
+        when(userMapperCustom.getUserNoneRole()).thenReturn(mockUsers);
+
+        List<User> result = userService.getUserNoneRole();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(userMapperCustom).getUserNoneRole();
     }
 
 }

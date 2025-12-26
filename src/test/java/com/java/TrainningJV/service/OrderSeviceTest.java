@@ -408,5 +408,153 @@ public class OrderSeviceTest {
         verify(orderMapperCustom, never()).statisticalOrder(null, null, 0, null);
 
     }
+
+    @Test
+    void findOrderByDay_success() {
+        List<Order> mockOrders = Arrays.asList(orderTest, orderTest1);
+        when(orderMapperCustom.findOrderByDay()).thenReturn(mockOrders);
+
+        List<Order> result = orderServiceImpl.findOrderByDay();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(orderMapperCustom).findOrderByDay();
+    }
+
+    @Test
+    void findOrderByWeek_success() {
+        List<Order> mockOrders = Arrays.asList(orderTest);
+        when(orderMapperCustom.findOrderByWeek()).thenReturn(mockOrders);
+
+        List<Order> result = orderServiceImpl.findOrderByWeek();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(orderMapperCustom).findOrderByWeek();
+    }
+
+    @Test
+    void findOrderByMonth_success() {
+        List<Order> mockOrders = Arrays.asList(orderTest, orderTest1);
+        when(orderMapperCustom.findOrderByMonth()).thenReturn(mockOrders);
+
+        List<Order> result = orderServiceImpl.findOrderByMonth();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(orderMapperCustom).findOrderByMonth();
+    }
+
+    @Test
+    void findOrderByYear_success() {
+        List<Order> mockOrders = Arrays.asList(orderTest1);
+        when(orderMapperCustom.findOrderByYear()).thenReturn(mockOrders);
+
+        List<Order> result = orderServiceImpl.findOrderByYear();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(orderMapperCustom).findOrderByYear();
+    }
+
+    @Test
+    void findOrdersByRange_success() {
+        LocalDate startDate = LocalDate.of(2025, 1, 1);
+        LocalDate endDate = LocalDate.of(2025, 12, 31);
+        List<Order> mockOrders = Arrays.asList(orderTest, orderTest1);
+        
+        when(orderMapperCustom.findOrderByTypeOrRange(startDate, endDate)).thenReturn(mockOrders);
+
+        List<Order> result = orderServiceImpl.findOrdersByRange(startDate, endDate);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(orderMapperCustom).findOrderByTypeOrRange(startDate, endDate);
+    }
+
+    @Test
+    void createOrderFormCart_emptyCart_throwBadRequest() {
+        when(cartMapper.selectByPrimaryKey(1)).thenReturn(cartTest);
+        when(cartItemMapperCustom.findByCartId(1)).thenReturn(Arrays.asList());
+
+        BadRequestException ex = assertThrows(BadRequestException.class, () -> {
+            orderServiceImpl.createOrderFormCart(1);
+        });
+
+        assertEquals("Cart is empty", ex.getMessage());
+        verify(cartMapper).selectByPrimaryKey(1);
+        verify(cartItemMapperCustom).findByCartId(1);
+    }
+
+    @Test
+    void updateOrder_withStatus_success() {
+        OrderRequest orderRequestWithStatus = OrderRequest.builder()
+            .userId(1)
+            .fullName("Updated Name")
+            .address("Updated Address")
+            .phone("0987654321")
+            .email("updated@gmail.com")
+            .status("delivered")
+        .build();
+
+        when(orderMapper.selectByPrimaryKey(1)).thenReturn(orderTest);
+        when(orderMapper.updateByPrimaryKey(any(Order.class))).thenReturn(1);
+
+        Order result = orderServiceImpl.updateOrder(1, orderRequestWithStatus);
+
+        assertNotNull(result);
+        assertEquals(OrderStatus.delivered, result.getStatus());
+        verify(orderMapper).selectByPrimaryKey(1);
+        verify(orderMapper).updateByPrimaryKey(any(Order.class));
+    }
+
+    @Test
+    void updateOrder_invalidStatus_throwException() {
+        OrderRequest orderRequestInvalidStatus = OrderRequest.builder()
+            .userId(1)
+            .fullName("Test")
+            .address("Address")
+            .phone("0987654321")
+            .email("test@gmail.com")
+            .status("invalid_status")
+        .build();
+
+        when(orderMapper.selectByPrimaryKey(1)).thenReturn(orderTest);
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            orderServiceImpl.updateOrder(1, orderRequestInvalidStatus);
+        });
+
+        assertEquals("Invalid status value: invalid_status", ex.getMessage());
+        verify(orderMapper).selectByPrimaryKey(1);
+    }
+
+    @Test
+    void deleteOrder_badDelete_throwBadRequest() {
+        when(orderMapper.selectByPrimaryKey(1)).thenReturn(orderTest);
+        when(orderMapper.deleteByPrimaryKey(1)).thenReturn(0);
+
+        BadRequestException ex = assertThrows(BadRequestException.class, () -> {
+            orderServiceImpl.deleteOrder(1);
+        });
+
+        assertEquals("Delete failed for order id = 1", ex.getMessage());
+        verify(orderMapper).selectByPrimaryKey(1);
+        verify(orderMapper).deleteByPrimaryKey(1);
+    }
+
+    @Test
+    void updateOrder_badUpdate_throwBadRequest() {
+        when(orderMapper.selectByPrimaryKey(1)).thenReturn(orderTest);
+        when(orderMapper.updateByPrimaryKey(any(Order.class))).thenReturn(0);
+
+        BadRequestException ex = assertThrows(BadRequestException.class, () -> {
+            orderServiceImpl.updateOrder(1, orderRequest);
+        });
+
+        assertEquals("Update failed for order id = 1", ex.getMessage());
+        verify(orderMapper).selectByPrimaryKey(1);
+        verify(orderMapper).updateByPrimaryKey(any(Order.class));
+    }
     
 }

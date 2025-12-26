@@ -14,9 +14,9 @@ pipeline {
 
     stages {
 
-        /* =========================
+        /*
            CHECKOUT SOURCE
-        ========================= */
+        */
         stage('Checkout Source') {
             steps {
                 echo 'Checkout source code from Github'
@@ -24,9 +24,9 @@ pipeline {
             }
         }
 
-        /* =========================
+        /*
            BUILD & TEST 
-        ========================= */
+        */
         stage('Build & Unit Test') {
             steps {
                 echo 'Build project and run unit tests'
@@ -48,9 +48,9 @@ pipeline {
             }
         }
 
-        /* =========================
+        /* 
            BUILD JAR
-        ========================= */
+         */
         stage('Package JAR') {
             steps {
                 echo 'Package application into Jar'
@@ -58,9 +58,9 @@ pipeline {
             }
         }
 
-        /* =========================
+        /* 
            BUILD DOCKER IMAGE
-        ========================= */
+         */
         stage('Build Docker Image') {
             steps {
                 echo 'Build Docker image'
@@ -68,9 +68,9 @@ pipeline {
             }
         }
 
-        /* =========================
+        /* 
            DEPLOY TO DEV ENVIRONMENT
-        ========================= */
+         */
         stage('Deloy Docker Container') {
             steps {
                 echo 'Deloy application using Docker'
