@@ -55,7 +55,7 @@ public class CartSeviceImpl implements CartSevice {
         Cart cart = cartMapper.selectByUserId(userId);
         if (cart == null) {
             log.error("Cart not found for user with ID: {}", userId);
-            throw new ResourceNotFoundException("Cart","id", userId);
+            throw new ResourceNotFoundException("Cart","id:", userId);
         }
         return cart;
     }
@@ -74,7 +74,7 @@ public class CartSeviceImpl implements CartSevice {
         Cart extingCart = cartMapper.selectByUserId(userId);
         if (extingCart == null) {
             log.error("Cart not found for user with ID: {}", userId);
-            throw new ResourceNotFoundException("Cart", "userId", userId);
+            throw new ResourceNotFoundException("Cart", "userId:", userId);
         }
         List<CartItem> items = cartItemMapperCustom.findByCartId(extingCart.getId());
         if (items.isEmpty()) {
@@ -91,7 +91,7 @@ public class CartSeviceImpl implements CartSevice {
         Cart cart = cartMapper.selectByPrimaryKey(req.getCartId());
         if (cart == null) {
             log.error("Cart not found for user with ID: {}",  req.getCartId());
-            throw new ResourceNotFoundException("Cart", "userId", req.getCartId());
+            throw new ResourceNotFoundException("Cart", "userId:", req.getCartId());
         }
         
         Product product = productMapper.selectByPrimaryKey(req.getProductId());
@@ -129,7 +129,7 @@ public class CartSeviceImpl implements CartSevice {
         log.info("update item with id: ", id);
         CartItem oldItems = cartItemMapper.selectByPrimaryKey(id);
         if(oldItems == null){
-            throw new ResourceNotFoundException("Cart_item", "id", id);
+            throw new ResourceNotFoundException("Cart_item", "id:", id);
         }
 
         CartItem updateCartItem = CartItem.builder()
@@ -154,12 +154,12 @@ public class CartSeviceImpl implements CartSevice {
     public void deleteItem(Integer userId, Integer productId){
         Cart cart = cartMapper.selectByUserId(userId);
         if(cart == null){
-            throw new ResourceNotFoundException("Cart", "User id", userId);
+            throw new ResourceNotFoundException("Cart", "User id:", userId);
         }
 
         CartItem  cartItem = cartItemMapper.selectByCartIdAndProductId(cart.getId(), productId);
          if (cartItem == null) {
-        throw new ResourceNotFoundException("Product ", "id", productId);
+        throw new ResourceNotFoundException("Product ", "id:", productId);
         }
 
         int rows = cartItemMapperCustom.deleteCartItem(cart.getId(), productId);
@@ -176,7 +176,7 @@ public class CartSeviceImpl implements CartSevice {
     public void deleteCart(Integer cartId) {
         Cart extingCart = cartMapper.selectByPrimaryKey(cartId);
         if(extingCart == null){
-            throw new ResourceNotFoundException("cart", "id", cartId);
+            throw new ResourceNotFoundException("cart", "id:", cartId);
         }
         cartItemMapper.deleteByPrimaryKey(cartId);
         log.info("Delete cart with id: ", cartId);

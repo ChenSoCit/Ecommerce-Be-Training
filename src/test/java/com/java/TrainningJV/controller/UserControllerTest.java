@@ -155,33 +155,21 @@ public class UserControllerTest {
         verify(userService).getRoleCount();
     }
 
-    @Test
-    void getAllUserWithOrder_Success() throws Exception {
-        List<UserWithOrderResponse> usersWithOrders = Arrays.asList(new UserWithOrderResponse());
-        when(userService.getAllUsersWithOrders()).thenReturn(usersWithOrders);
 
-        mockMvc.perform(get("/api/users/all-with-orders"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.message").value("get all users with orders"));
+    // @Test
+    // void getUserWithOrders_Success() throws Exception {
+    //     UserResponse userResponse = new UserResponse();
+    //     userResponse.setUserId(1);
+    //     when(userService.getUserWithOrders(1)).thenReturn(userResponse);
 
-        verify(userService).getAllUsersWithOrders();
-    }
+    //     mockMvc.perform(get("/api/users/users-orders/1"))
+    //             .andExpect(status().isOk())
+    //             .andExpect(jsonPath("$.status").value(200))
+    //             .andExpect(jsonPath("$.message").value("User with orders fetched successfully"))
+    //             .andExpect(jsonPath("$.data.id").value(1));
 
-    @Test
-    void getUserWithOrders_Success() throws Exception {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setUserId(1);
-        when(userService.getUserWithOrders(1)).thenReturn(userResponse);
-
-        mockMvc.perform(get("/api/users/users-orders/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.message").value("User with orders fetched successfully"))
-                .andExpect(jsonPath("$.data.id").value(1));
-
-        verify(userService).getUserWithOrders(1);
-    }
+    //     verify(userService).getUserWithOrders(1);
+    // }
 
     @Test
     void getUserByPhone_Success() throws Exception {

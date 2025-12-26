@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService{
         log.info("created order order request, {}", orderRequest);
         User exitingUser = userMapper.selectByPrimaryKey(orderRequest.getUserId());
         if (exitingUser == null) {
-            throw new ResourceNotFoundException("User","id", orderRequest.getUserId());
+            throw new ResourceNotFoundException("User","id:", orderRequest.getUserId());
         }
 
         Order newOrder = Order.builder()
@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService{
         log.info("find order by order id");
         Order existingOrder = orderMapper.selectByPrimaryKey(id);
         if (existingOrder == null) {
-            throw new ResourceNotFoundException("Order", "id", id);
+            throw new ResourceNotFoundException("Order", "id:", id);
         }
         return existingOrder;
     }
@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService{
 
         Order existingOrder = orderMapper.selectByPrimaryKey(id);
         if (existingOrder == null) {
-            throw new ResourceNotFoundException("Order", "id", id);
+            throw new ResourceNotFoundException("Order", "id:", id);
         }
 
         // Xác định status mới
@@ -129,7 +129,7 @@ public class OrderServiceImpl implements OrderService{
         Order existing = orderMapper.selectByPrimaryKey(id);
         if (existing == null) {
             log.info("Order with id: {} not found", id);
-            throw new ResourceNotFoundException("Order", "id", id);
+            throw new ResourceNotFoundException("Order", "id:", id);
         }
         // Xóa các order details liên quan
         orderDetailMapper.deleteByOrderId(id);
@@ -158,7 +158,7 @@ public class OrderServiceImpl implements OrderService{
         User existingUser = userMapper.selectByPrimaryKey(userId);
         if (existingUser == null) {
             log.info("User not found with id: {}", userId);
-            throw new ResourceNotFoundException("User", "id", userId);
+            throw new ResourceNotFoundException("User", "id:", userId);
         }   
         List<Order> orders = orderMapperCustom.findOrderByUserId(userId);
         return orders;

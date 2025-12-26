@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
         Product exitingProduct = productMapper.selectByPrimaryKey(id);
         if (exitingProduct == null) {
             log.info("Product with id: " + id + " not found");
-            throw new ResourceNotFoundException("Product", "id", id);
+            throw new ResourceNotFoundException("Product", "id:", id);
         }
 
         log.info("Product with id: {} ", id );
@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
         Category exitingCategory = categoryMapper.selectByPrimaryKey(productRequest.getCategoryId());
         if(exitingCategory == null){
             log.info("Category with id: {} not found", productRequest.getCategoryId());
-            throw new ResourceNotFoundException("Category", "id", productRequest.getCategoryId());
+            throw new ResourceNotFoundException("Category", "id:", productRequest.getCategoryId());
         }
         
         Product newProduct = Product.builder()
@@ -97,7 +97,7 @@ public class ProductServiceImpl implements ProductService {
 
         if(exitingProduct == null){
             log.info("Product not found: {}", id);
-            throw new ResourceNotFoundException("Product", "id", id);
+            throw new ResourceNotFoundException("Product", "id:", id);
         }
         productMapper.deleteByPrimaryKey(id);
     }
@@ -108,7 +108,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Update product with id: {} and request: {}", id, productRequest);
         Product existingProduct = productMapper.selectByPrimaryKey(id);
         if (existingProduct == null) {
-           throw new ResourceNotFoundException("Product", "id", id);
+           throw new ResourceNotFoundException("Product", "id:", id);
         }
         
         Product updatedProduct = Product.builder()

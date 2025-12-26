@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectByPrimaryKey(id);
         if (user == null) {
             log.warn("User not found with id: {}", id);
-            throw new ResourceNotFoundException("User", "id", id);
+            throw new ResourceNotFoundException("User", "id:", id);
         }
         log.info("User found: {}", user);
         return user;
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         User existingUser = userMapper.selectByPrimaryKey(id);
         if (existingUser == null) {
             log.info("User not found id: {}", id);
-            throw new ResourceNotFoundException("User", "id",id);
+            throw new ResourceNotFoundException("User", "id:",id);
         }
         User updatedUser = User.builder()
             .id(id)
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
     User existingUser = userMapper.selectByPrimaryKey(id);
     if (existingUser == null) {
         log.info("User not found id: {}", id);
-        throw new ResourceNotFoundException("User", "id",id);
+        throw new ResourceNotFoundException("User", "id:",id);
     }
 
     int deletedRows = userMapper.deleteByPrimaryKey(id);
@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService {
         Role existingRole  = roleMapper.selectByPrimaryKey(roleId);
         if(existingRole == null){
             log.info("Role not found id: {}", roleId);
-            throw new ResourceNotFoundException("Role" ,":", roleId);
+            throw new ResourceNotFoundException("Role" ,"id:", roleId);
         }
         return userMapperCustom.getUserRole(roleId);
     }
@@ -166,11 +166,12 @@ public class UserServiceImpl implements UserService {
         }
          UserResponse user = userMapperCustom.getUserWithOrders(id);
          if (user == null) {
-            throw new ResourceNotFoundException("user", "id", id);
+            throw new ResourceNotFoundException("User", "id:", id);
          }
     
         return user;
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int addUserRole(UserRoleRequest userRoleRequest) { 
@@ -236,7 +237,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapperCustom.findByPhone(phone);
         if (user == null) {
             log.warn("User not found with phone: {}", phone);
-            throw new ResourceNotFoundException("User", "phone", phone);
+            throw new ResourceNotFoundException("User", "phone:", phone);
         }
         return user;
     }

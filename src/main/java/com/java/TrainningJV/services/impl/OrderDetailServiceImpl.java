@@ -58,13 +58,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
         // Lấy order & check trạng thái
         Order order = orderMapper.selectByPrimaryKey(req.getOrderId());
-        if (order == null) throw new ResourceNotFoundException("Order", "id", req.getOrderId());
+        if (order == null) throw new ResourceNotFoundException("Order", "id:", req.getOrderId());
         if (order.getStatus() != OrderStatus.pending)
             throw new BadRequestException("Order status must be PENDING to add details");
 
         // Lấy product & kiểm tra tồn kho
         Product product = productMapper.selectByPrimaryKey(req.getProductId());
-        if (product == null) throw new ResourceNotFoundException("Product", "id", req.getProductId());
+        if (product == null) throw new ResourceNotFoundException("Product", "id:", req.getProductId());
         int qty = req.getNumberOfProducts();
 
         // Tính tiền (server-side)
@@ -108,7 +108,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         OrderDetails exitingOrder = orderDetailMapper.selectByPrimaryKey(id);
         if(exitingOrder == null) {
             log.error("Select Order Details failed");
-            throw new ResourceNotFoundException("Order", "id", id);
+            throw new ResourceNotFoundException("Order", "id:", id);
         }
         return orderDetailMapper.selectByPrimaryKey(id);
     }

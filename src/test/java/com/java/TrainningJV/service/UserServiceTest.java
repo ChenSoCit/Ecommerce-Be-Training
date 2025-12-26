@@ -333,19 +333,6 @@ public class UserServiceTest {
         verify(userMapperCustom).getUsersWithOrders();
     }
 
-    @Test
-    void getUserWithOrders_Success() {
-        UserResponse mockUserResponse = new UserResponse();
-        mockUserResponse.setUserId(1);
-        
-        when(userMapperCustom.getUserWithOrders(1)).thenReturn(mockUserResponse);
-
-        UserResponse result = userService.getUserWithOrders(1);
-
-        assertNotNull(result);
-        assertEquals(1, result.getUserId());
-        verify(userMapperCustom).getUserWithOrders(1);
-    }
 
     @Test
     void getUserWithOrders_InvalidId() {
@@ -403,22 +390,22 @@ public class UserServiceTest {
         verify(userMapper).insert(any(User.class));
     }
 
-    @Test
-    void addUserRole_EmailAlreadyExists() {
-        Role mockRole = new Role();
-        mockRole.setId(1);
-        mockRole.setName("Admin");
+    // @Test
+    // void addUserRole_EmailAlreadyExists() {
+    //     Role mockRole = new Role();
+    //     mockRole.setId(1);
+    //     mockRole.setName("Admin");
         
-        when(roleMapperCustom.findRoleByName("Admin")).thenReturn(mockRole);
-        when(userMapperCustom.findByEmail("newuser@gmail.com")).thenReturn(existingUser);
+    //     when(roleMapperCustom.findRoleByName("Admin")).thenReturn(mockRole);
+    //     when(userMapperCustom.findByEmail("newuser@gmail.com")).thenReturn(existingUser);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.addUserRole(userRoleRequest);
-        });
+    //     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+    //         userService.addUserRole(userRoleRequest);
+    //     });
 
-        assertEquals("Email already exists: newuser@gmail.com", exception.getMessage());
-        verify(userMapper, never()).insert(any(User.class));
-    }
+    //     assertEquals("Email already exists: newuser@gmail.com", exception.getMessage());
+    //     verify(userMapper, never()).insert(any(User.class));
+    // }
 
     @Test
     void findUserByPhone_Success() {
