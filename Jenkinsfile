@@ -19,7 +19,7 @@ pipeline {
         */
         stage('Checkout Source') {
             steps {
-                echo 'Checkout source code from Github'
+                echo 'Checkout source code from Github demojenin'
                 checkout scm
             }
         }
