@@ -1,54 +1,52 @@
-name: ci-example
+name: Build and deploy WAR app to Azure Web App - xuantra-webapp
 
 on:
   push:
-    branches: ["main", "feat/auth"] # trigger chay khi co code duoc push len branch main hoac feat/auth
-  pull_request: 
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
-  build: # job name
-    runs-on: ubuntu-latest # su dung ubuntu-latest la environment de chay job
+  build:
+    runs-on: windows-latest
 
     steps:
-      - name: checkout code # step name
-        uses: actions/checkout@v4 # su dung action checkout de checkout code ve runner
+      - uses: actions/checkout@v4
 
-      - name: Setup JDK 17 # step name
-        uses: actions/setup-java@v4 # su dung action setup-java de cai dat JDK
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
-          java-version: '17' # chi dinh version JDK la 17
-          distribution: 'temurin' # chi dinh su dung temurin distribution
+          java-version: '17'
+          distribution: 'microsoft'
 
-      - name: Cache maven # step name
-        uses: actions/cache@v3 # su dung action cache de cache thu vien maven
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }} # tao key cache dua tren os va hash cua file pom.xml
-          restore-keys: |
-            ${{ runner.os }}-maven-  
+          name: java-app
+          path: target/*.war
 
-      - name: Build with Maven # step name
-        run: mvn -B clean install  # chay lenh mvn clean install de build project
+  deploy:
+    runs-on: windows-latest
+    needs: build
 
-      - name: Upload artifact # step name
-        uses: actions/upload-artifact@v4 # su dung action upload-artifact de upload artifact
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
         with:
-          name: spring-boot-app # chi dinh ten artifact
-          path: target/*.jar # chi dinh duong dan den file artifact
+          name: java-app
 
-      # Login Docker Hub
-      - name: Login  Docker Hub # step name
-        uses: docker/login-action@v3
+      - name: Login to Azure
+        uses: azure/login@v2
         with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}  
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B8274E92CCF8440BA8AC70CB0D97E351 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B401CCDE3A954908B1778F462AD35CC7 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A6A39231024A47768CD4A8AE442A6B32 }}
 
-      # Build Docker Image
-      - name: Build Docker Image # step name
-        run: |
-          docker build -t ${{ secrets.DOCKER_USER }}/spring-boot-app:${{ github.sha }} .
-
-      # Push image lên Docker Hub
-      - name: Push Docker image
-        run: |
-          docker push ${{ secrets.DOCKER_USER }}/spring-boot-app:${{ github.sha }}
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'xuantra-webapp'
+          package: '*.war'
